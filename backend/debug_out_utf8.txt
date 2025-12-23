@@ -1,0 +1,24 @@
+Traceback (most recent call last):
+  File "C:\Users\lenovo\Desktop\Dev-Ground\UST\cyb.lib-main\backend\debug_views.py", line 10, in <module>
+    from api import views
+  File "C:\Users\lenovo\Desktop\Dev-Ground\UST\cyb.lib-main\backend\api\views.py", line 6, in <module>
+    from .serializers import (
+    ...<4 lines>...
+    )
+  File "C:\Users\lenovo\Desktop\Dev-Ground\UST\cyb.lib-main\backend\api\serializers.py", line 30, in <module>
+    class PathSerializer(serializers.ModelSerializer):
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+    ...<2 lines>...
+            fields = ["id", "title", "slug", "type"]  # maps to paths table columns [web:86]
+            ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\Dev-Ground\UST\cyb.lib-main\backend\api\serializers.py", line 31, in PathSerializer
+    class Meta:
+    ^^^^^^^^^^^
+        model = Path
+        ^^^^^^^^^^^^
+        fields = ["id", "title", "slug", "type"]  # maps to paths table columns [web:86]
+        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "C:\Users\lenovo\Desktop\Dev-Ground\UST\cyb.lib-main\backend\api\serializers.py", line 32, in Meta
+    model = Path
+            ^^^^
+NameError: name 'Path' is not defined

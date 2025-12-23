@@ -1,0 +1,40 @@
+.library {
+  padding: 100px 20px;
+  text-align: center;
+}
+
+.library h2 {
+  color: #007bff;
+  margin-bottom: 2rem;
+}
+
+.library-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 1.5rem;
+}
+
+.library-card {
+  background: #fff;
+  padding: 1.5rem;
+  width: 250px;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.library-card:hover {
+  transform: translateY(-10px);
+}
+
+.library-card h3 {
+  margin-bottom: 0.5rem;
+  color: #007bff;
+}
+
+.library-card p {
+  font-size: 0.9rem;
+  color: #555;
+}

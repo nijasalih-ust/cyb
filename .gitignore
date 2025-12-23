@@ -1,0 +1,117 @@
+# Python / Django
+*.py[cod]
+__pycache__/
+*.so
+.Python
+env/
+.venv/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+pip-wheel-metadata/
+share/python-wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+MANIFEST
+
+# Django
+*.log
+local_settings.py
+db.sqlite3
+db.sqlite3-journal
+/media
+/staticfiles
+/static
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+*.sublime-project
+*.sublime-workspace
+
+# Node.js / React
+node_modules/
+npm-debug.log
+yarn-error.log
+yarn-debug.log
+.npm
+.eslintcache
+dist/
+build/
+coverage/
+.cache/
+
+# Vite
+.vite/
+.vite-temp/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.hypothesis/
+
+# Temporary files
+*.tmp
+*.bak
+*.swp
+*~
+.~*
+
+# Database backups
+*.sql
+*.sql.gz
+*.dump
+
+# Poetry / Pipenv
+poetry.lock
+Pipfile.lock
+
+# Debug files
+debug_output.txt
+debug_out_utf8.txt
+debug_views.py
+
+# Local development
+.env.local
+.env.*.local
+*.local
+
+# Migrations (optional - uncomment if you want to track migrations in git)
+# backend/api/migrations/
+
+# Distribution
+dist/
+build/
+*.tar.gz

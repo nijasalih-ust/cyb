@@ -1,0 +1,20 @@
+#Postgres connection setup
+create .env in backend/backend
+
+# python -c "from django.core.management.utils import get_random_secret_key; print(get_random_secret_key())"
+
+env file content:
+"
+DEBUG=True
+SECRET_KEY=''
+
+DB_NAME=
+DB_USER=
+DB_PASSWORD=
+DB_HOST=
+DB_PORT=
+"
+#run seed.py
+python manage.py shell 
+>>> from api.seed import run
+>>> run()

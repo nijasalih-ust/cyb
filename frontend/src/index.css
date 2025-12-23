@@ -1,0 +1,54 @@
+/* @tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: system-ui, -apple-system, sans-serif;
+} */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-black text-gray-200 font-body antialiased selection:bg-cyber-purple selection:text-white;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    @apply font-display tracking-tight;
+  }
+}
+
+@layer components {
+  .cyber-card {
+    @apply bg-cyber-card border border-cyber-border rounded-xl2 p-6 shadow-glow;
+  }
+
+  .cyber-button {
+    @apply px-4 py-2 rounded-lg bg-cyber-purple text-white font-medium
+           hover:bg-cyber-blue transition-all duration-300;
+  }
+
+  .cyber-outline {
+    @apply border border-cyber-purple text-cyber-purple
+           hover:bg-cyber-purple hover:text-white transition;
+  }
+}
+
+@keyframes gradient-border {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animate-gradient-border {
+  background-size: 200% 200%;
+  animation: gradient-border 4s ease infinite;
+}
