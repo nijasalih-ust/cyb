@@ -4,7 +4,10 @@ import Navigator from "../Navigator/Navigator";
 
 const Layout = ({ children }) => {
     return (
-        <div className="min-h-screen bg-black font-body">
+        <div 
+            className="min-h-screen font-body transition-colors duration-300"
+            style={{ backgroundColor: 'var(--bg-primary)' }}
+        >
             <Sidebar />
             <div className="ml-64 p-8 relative min-h-screen">
                 {/* Top Gradient Line */}

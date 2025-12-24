@@ -1,54 +1,91 @@
-/* @tailwind base;
-@tailwind components;
-@tailwind utilities;
-
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: system-ui, -apple-system, sans-serif;
-} */
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  /* DARK MODE (Default) - RGB values for opacity support */
+  --bg-primary: 10 10 16;      /* #0a0a10 */
+  --bg-secondary: 17 17 42;    /* #11112a */
+  --bg-tertiary: 30 30 60;     /* Inputs */
+  
+  --text-primary: 255 255 255; /* #ffffff */
+  --text-secondary: 161 161 170; /* #a1a1aa */
+  --text-muted: 113 113 122;   /* #71717a */
+  
+  --border-color: 47 47 95;    /* #2f2f5f */
+  
+  --accent-purple: 168 85 247; /* #a855f7 */
+  --accent-blue: 59 130 246;   /* #3b82f6 */
+}
+
+[data-theme="light"] {
+  /* LIGHT MODE - High Contrast Overrides */
+  --bg-primary: 248 250 252;   /* #f8fafc */
+  --bg-secondary: 255 255 255; /* #ffffff */
+  --bg-tertiary: 241 245 249;  /* #f1f5f9 */
+  
+  --text-primary: 15 23 42;    /* #0f172a */
+  --text-secondary: 71 85 105; /* #475569 */
+  --text-muted: 148 163 184;   /* #94a3b8 */
+  
+  --border-color: 203 213 225; /* #cbd5e1 */
+  
+  --accent-purple: 124 58 237; /* #7c3aed */
+  --accent-blue: 37 99 235;    /* #2563eb */
+}
+
 @layer base {
-  body {
-    @apply bg-black text-gray-200 font-body antialiased selection:bg-cyber-purple selection:text-white;
+  html {
+    scroll-behavior: smooth;
   }
+  
+  body {
+    @apply font-body antialiased transition-colors duration-300;
+    background-color: rgb(var(--bg-primary));
+    color: rgb(var(--text-primary));
+  }
+  
   h1, h2, h3, h4, h5, h6 {
     @apply font-display tracking-tight;
+    color: rgb(var(--text-primary));
+  }
+
+  ::selection {
+    background-color: rgba(var(--accent-purple), 0.3);
+    color: rgb(var(--text-primary));
   }
 }
 
 @layer components {
+  /* Unified Card Style */
   .cyber-card {
-    @apply bg-cyber-card border border-cyber-border rounded-xl2 p-6 shadow-glow;
+    @apply rounded-xl p-6 border transition-all duration-300;
+    background-color: rgb(var(--bg-secondary));
+    border-color: rgb(var(--border-color));
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  }
+  
+  .cyber-card:hover {
+    box-shadow: 0 0 20px rgba(var(--accent-purple), 0.15);
+    border-color: rgba(var(--accent-purple), 0.5);
   }
 
-  .cyber-button {
-    @apply px-4 py-2 rounded-lg bg-cyber-purple text-white font-medium
-           hover:bg-cyber-blue transition-all duration-300;
+  /* Unified Input Style */
+  .cyber-input {
+    @apply w-full px-4 py-2 rounded-lg border transition-all duration-200 outline-none;
+    background-color: rgb(var(--bg-tertiary));
+    border-color: rgb(var(--border-color));
+    color: rgb(var(--text-primary));
   }
-
-  .cyber-outline {
-    @apply border border-cyber-purple text-cyber-purple
-           hover:bg-cyber-purple hover:text-white transition;
+  
+  .cyber-input:focus {
+    border-color: rgb(var(--accent-purple));
+    box-shadow: 0 0 0 2px rgba(var(--accent-purple), 0.2);
   }
-}
-
-@keyframes gradient-border {
-  0% { background-position: 0% 50%; }
-  50% { background-position: 100% 50%; }
-  100% { background-position: 0% 50%; }
-}
-
-.animate-gradient-border {
-  background-size: 200% 200%;
-  animation: gradient-border 4s ease infinite;
+  
+  .cyber-input::placeholder {
+    color: rgb(var(--text-muted));
+  }
 }
