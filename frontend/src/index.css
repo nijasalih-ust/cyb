@@ -5,14 +5,14 @@
 @tailwind utilities;
 
 :root {
-  /* DARK MODE (Default) - RGB values for opacity support */
-  --bg-primary: 10 10 16;      /* #0a0a10 */
-  --bg-secondary: 17 17 42;    /* #11112a */
+  /* DARK MODE (Default) */
+  --bg-primary: 10 10 16;      /* #0a0a10 - Deep Black/Blue */
+  --bg-secondary: 17 17 42;    /* #11112a - Dark Blue Card */
   --bg-tertiary: 30 30 60;     /* Inputs */
   
-  --text-primary: 255 255 255; /* #ffffff */
-  --text-secondary: 161 161 170; /* #a1a1aa */
-  --text-muted: 113 113 122;   /* #71717a */
+  --text-primary: 255 255 255; /* #ffffff - Pure White */
+  --text-secondary: 161 161 170; /* #a1a1aa - Light Grey */
+  --text-muted: 113 113 122;   /* #71717a - Darker Grey */
   
   --border-color: 47 47 95;    /* #2f2f5f */
   
@@ -21,25 +21,23 @@
 }
 
 [data-theme="light"] {
-  /* LIGHT MODE - High Contrast Overrides */
-  --bg-primary: 248 250 252;   /* #f8fafc */
-  --bg-secondary: 255 255 255; /* #ffffff */
-  --bg-tertiary: 241 245 249;  /* #f1f5f9 */
+  /* LIGHT MODE - High Contrast & Purple Tint */
+  --bg-primary: 250 248 255;   /* #faf8ff - Very subtle Lavender tint (Not Grey) */
+  --bg-secondary: 255 255 255; /* #ffffff - Pure White Cards */
+  --bg-tertiary: 243 244 246;  /* #f3f4f6 - Light Grey Inputs */
   
-  --text-primary: 15 23 42;    /* #0f172a */
-  --text-secondary: 71 85 105; /* #475569 */
-  --text-muted: 148 163 184;   /* #94a3b8 */
+  --text-primary: 15 23 42;    /* #0f172a - Deep Navy (Almost Black) */
+  --text-secondary: 51 65 85;  /* #334155 - Dark Slate (Readable) */
+  --text-muted: 100 116 139;   /* #64748b - Medium Slate */
   
-  --border-color: 203 213 225; /* #cbd5e1 */
+  --border-color: 226 232 240; /* #e2e8f0 - Light Border */
   
-  --accent-purple: 124 58 237; /* #7c3aed */
-  --accent-blue: 37 99 235;    /* #2563eb */
+  --accent-purple: 109 40 217; /* #6d28d9 - Deep Purple (High Contrast) */
+  --accent-blue: 29 78 216;    /* #1d4ed8 - Deep Blue */
 }
 
 @layer base {
-  html {
-    scroll-behavior: smooth;
-  }
+  html { scroll-behavior: smooth; }
   
   body {
     @apply font-body antialiased transition-colors duration-300;
@@ -51,30 +49,24 @@
     @apply font-display tracking-tight;
     color: rgb(var(--text-primary));
   }
-
-  ::selection {
-    background-color: rgba(var(--accent-purple), 0.3);
-    color: rgb(var(--text-primary));
-  }
 }
 
 @layer components {
-  /* Unified Card Style */
+  /* Enforced Rounded Corners here */
   .cyber-card {
-    @apply rounded-xl p-6 border transition-all duration-300;
+    @apply rounded-2xl p-6 border transition-all duration-300;
     background-color: rgb(var(--bg-secondary));
     border-color: rgb(var(--border-color));
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); /* Softer shadow */
   }
   
   .cyber-card:hover {
-    box-shadow: 0 0 20px rgba(var(--accent-purple), 0.15);
+    box-shadow: 0 10px 30px -10px rgba(var(--accent-purple), 0.2);
     border-color: rgba(var(--accent-purple), 0.5);
   }
 
-  /* Unified Input Style */
   .cyber-input {
-    @apply w-full px-4 py-2 rounded-lg border transition-all duration-200 outline-none;
+    @apply w-full px-4 py-2 rounded-xl border transition-all duration-200 outline-none;
     background-color: rgb(var(--bg-tertiary));
     border-color: rgb(var(--border-color));
     color: rgb(var(--text-primary));

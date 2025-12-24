@@ -1,5 +1,5 @@
 import React from "react";
-import { FaBook, FaClipboardCheck, FaMapSigns, FaBookOpen, FaRobot } from "react-icons/fa";
+import { FaBook, FaClipboardCheck, FaBookOpen, FaRobot } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 
@@ -36,7 +36,8 @@ function Features() {
   return (
     <section id="features" className="py-20 max-w-6xl mx-auto px-6">
       <motion.h2
-        className="text-4xl font-bold text-center text-cyber-blue mb-12"
+        // FIXED: text-cyber-text-primary
+        className="text-4xl font-bold text-center text-cyber-text-primary mb-12"
         initial={{ opacity: 0, y: 20 }}
         whileInView={{ opacity: 1, y: 0 }}
         viewport={{ once: true }}
@@ -45,26 +46,30 @@ function Features() {
         Features
       </motion.h2>
 
-      {/* --- CHANGE: Adjusted horizontal and vertical gaps separately --- */}
       <div className="grid md:grid-cols-2 gap-x-6 gap-y-8">
         {FEATURES.map((f, i) => (
           <motion.div
             key={f.title}
             onClick={() => navigate(f.path)}
-            className="cursor-pointer bg-cyber-card border border-cyber-border rounded-xl p-4
-                       hover:shadow-[0_0_30px_rgba(124,58,237,0.3)]
-                       transition"
+            // FIXED: Using cyber-card class
+            className="cursor-pointer cyber-card group"
             initial={{ opacity: 0, y: 40 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
             transition={{ delay: i * 0.1, duration: 0.6 }}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ scale: 1.02 }}
           >
-            <div className="text-cyber-purple mb-3 text-2xl">{f.icon}</div>
-            <h3 className="text-base font-semibold text-cyber-blue">
+            <div className="text-cyber-purple mb-3 text-2xl group-hover:scale-110 transition-transform duration-300">
+                {f.icon}
+            </div>
+            {/* FIXED: text-cyber-text-primary */}
+            <h3 className="text-lg font-semibold text-cyber-text-primary">
               {f.title}
             </h3>
-            <p className="mt-2 text-sm text-cyber-muted">{f.desc}</p>
+            {/* FIXED: text-cyber-text-secondary */}
+            <p className="mt-2 text-sm text-cyber-text-secondary">
+                {f.desc}
+            </p>
           </motion.div>
         ))}
       </div>

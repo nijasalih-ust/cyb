@@ -11,8 +11,7 @@ const DashboardStats = () => {
                 const response = await api.get('/dashboard/');
                 setStats(response.data);
             } catch (error) {
-                console.error("Failed to fetch dashboard stats", error);
-                // Fallback for demo
+                // Mock data fallback
                 setStats({ 
                     techniques_mastered: 42, 
                     techniques_total: 201, 
@@ -33,24 +32,32 @@ const DashboardStats = () => {
     return (
         <div className="max-w-7xl mx-auto px-6 py-8">
             <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+                {/* Stats Card 1 */}
                 <div className="cyber-card">
-                    <h3 className="text-cyber-text-secondary text-sm">Techniques Mastered</h3>
-                    <p className="text-3xl font-bold text-cyber-blue">
+                    <h3 className="text-cyber-text-muted text-xs font-bold uppercase tracking-wider">Techniques Mastered</h3>
+                    <p className="text-3xl font-bold text-cyber-blue mt-2">
                         {stats.techniques_mastered || 0} 
-                        <span className="text-sm text-cyber-text-muted ml-1">/ {stats.techniques_total || 201}</span>
+                        <span className="text-sm text-cyber-text-muted ml-1 font-normal">/ {stats.techniques_total || 201}</span>
                     </p>
                 </div>
+                
+                {/* Stats Card 2 */}
                 <div className="cyber-card">
-                    <h3 className="text-cyber-text-secondary text-sm">Current Rank</h3>
-                    <p className="text-3xl font-bold text-cyber-purple capitalize">{stats.current_tier || 'Skiddie'}</p>
+                    <h3 className="text-cyber-text-muted text-xs font-bold uppercase tracking-wider">Current Rank</h3>
+                    <p className="text-3xl font-bold text-cyber-purple capitalize mt-2">{stats.current_tier || 'Skiddie'}</p>
                 </div>
+
+                {/* Stats Card 3 */}
                 <div className="cyber-card">
-                    <h3 className="text-cyber-text-secondary text-sm">Labs Completed</h3>
-                    <p className="text-3xl font-bold text-green-500">{stats.labs_completed || 0}</p>
+                    <h3 className="text-cyber-text-muted text-xs font-bold uppercase tracking-wider">Labs Completed</h3>
+                    <p className="text-3xl font-bold text-green-500 mt-2">{stats.labs_completed || 0}</p>
                 </div>
+
+                {/* Stats Card 4 */}
                 <div className="cyber-card">
-                    <h3 className="text-cyber-text-secondary text-sm">Time Active</h3>
-                    <p className="text-3xl font-bold text-cyber-text-primary">{stats.time_spent || '0h'}</p>
+                    <h3 className="text-cyber-text-muted text-xs font-bold uppercase tracking-wider">Time Active</h3>
+                    {/* FIXED: Removed text-cyber-text-primary */}
+                    <p className="text-3xl font-bold text-cyber-text-primary mt-2">{stats.time_spent || '0h'}</p>
                 </div>
             </div>
         </div>

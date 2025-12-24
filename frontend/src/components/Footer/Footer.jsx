@@ -84,7 +84,7 @@ function Footer() {
               <motion.button
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-6 text-sm font-medium bg-gradient-to-r from-cyber-purple to-cyber-blue text-white rounded-full"
+                className="px-6 text-sm font-medium bg-gradient-to-r from-cyber-purple to-cyber-blue text-cyber-text-primary rounded-full"
               >
                 Subscribe
               </motion.button>

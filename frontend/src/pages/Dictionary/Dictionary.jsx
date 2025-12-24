@@ -34,7 +34,7 @@ function Dictionary() {
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto">
         <h2 className="text-3xl font-display font-bold text-cyber-purple mb-2">Threat Matrix</h2>
-        <p className="text-gray-400 font-body mb-8">Encyclopedia of adversary tactics and techniques based on MITRE ATT&CK®.</p>
+        <p className="text-cyber-text-secondary font-body mb-8">Encyclopedia of adversary tactics and techniques based on MITRE ATT&CK®.</p>
 
         {/* Search Bar */}
         <div className="mb-8">
@@ -43,7 +43,7 @@ function Dictionary() {
             placeholder="Search tactics..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full max-w-md px-4 py-3 bg-cyber-card border border-cyber-border/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyber-purple text-white placeholder-gray-500 font-body shadow-inner"
+            className="w-full max-w-md px-4 py-3 bg-cyber-card border border-cyber-border/50 rounded-xl focus:outline-none focus:ring-2 focus:ring-cyber-purple text-cyber-text-primary placeholder-gray-500 font-body shadow-inner"
           />
         </div>
 
@@ -61,17 +61,17 @@ function Dictionary() {
                 className="bg-cyber-card border border-cyber-border/50 p-6 rounded-xl2 hover:border-cyber-purple/50 transition-all duration-300 hover:shadow-glow group cursor-pointer"
               >
                 <div className="flex justify-between items-start mb-2">
-                  <h3 className="text-xl font-display font-bold text-white group-hover:text-cyber-purple transition-colors">{item.name}</h3>
+                  <h3 className="text-xl font-display font-bold text-cyber-text-primary group-hover:text-cyber-purple transition-colors">{item.name}</h3>
                   <span className="text-xs font-mono bg-cyber-purple/10 text-cyber-purple px-2 py-1 rounded border border-cyber-purple/20">
                     {item.mitre_id}
                   </span>
                 </div>
-                <p className="text-gray-400 text-sm mb-4 line-clamp-3 font-body">
+                <p className="text-cyber-text-secondary text-sm mb-4 line-clamp-3 font-body">
                   {item.description || "No description available."}
                 </p>
                 <div className="text-xs text-gray-500 font-mono flex items-center gap-2">
                   <span className="w-2 h-2 rounded-full bg-cyber-blue"></span>
-                  Techniques: <span className="text-white">{item.technique_count}</span>
+                  Techniques: <span className="text-cyber-text-primary">{item.technique_count}</span>
                 </div>
               </div>
             ))

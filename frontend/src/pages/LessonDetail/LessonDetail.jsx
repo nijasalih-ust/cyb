@@ -50,7 +50,7 @@ const LessonDetail = () => {
         <div className="max-w-4xl mx-auto space-y-6">
             <button
                 onClick={() => navigate(-1)}
-                className="flex items-center text-gray-400 hover:text-cyber-blue transition-colors gap-2"
+                className="flex items-center text-cyber-text-secondary hover:text-cyber-blue transition-colors gap-2"
             >
                 <ChevronLeft size={20} /> Abort / Back
             </button>
@@ -68,8 +68,8 @@ const LessonDetail = () => {
                         </span>
                         <span className="text-gray-500 font-mono text-xs">ID: {lesson.id.split('-')[0]}</span>
                     </div>
-                    <h1 className="text-3xl font-display font-bold text-white mb-4">{lesson.title}</h1>
-                    <div className="flex items-center gap-6 text-sm text-gray-400">
+                    <h1 className="text-3xl font-display font-bold text-cyber-text-primary mb-4">{lesson.title}</h1>
+                    <div className="flex items-center gap-6 text-sm text-cyber-text-secondary">
                         <div className="flex items-center gap-2">
                             <Terminal size={16} className="text-cyber-blue" />
                             <span>Interactive Lab</span>
@@ -84,7 +84,7 @@ const LessonDetail = () => {
                 {/* Content */}
                 <div className="p-8 space-y-8">
                     <div className="prose prose-invert max-w-none">
-                        <h3 className="text-xl font-bold text-white mb-4">Mission Briefing</h3>
+                        <h3 className="text-xl font-bold text-cyber-text-primary mb-4">Mission Briefing</h3>
                         <p className="text-gray-300 leading-relaxed whitespace-pre-line">
                             {lesson.description || "No specific briefing available for this mission. Proceed with standard protocols."}
                         </p>

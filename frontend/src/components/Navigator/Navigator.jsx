@@ -40,7 +40,7 @@ function Navigator() {
         <>
             {!isOpen && (
                 <motion.button
-                    className="fixed bottom-6 right-6 p-4 bg-cyber-purple text-white rounded-full shadow-glow z-50 hover:scale-110 transition-transform"
+                    className="fixed bottom-6 right-6 p-4 bg-cyber-purple text-cyber-text-primary rounded-full shadow-glow z-50 hover:scale-110 transition-transform"
                     onClick={() => setIsOpen(true)}
                     initial={{ scale: 0 }}
                     animate={{ scale: 1 }}

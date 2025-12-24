@@ -28,12 +28,12 @@ const TacticDetail = () => {
         <div className="max-w-7xl mx-auto space-y-6">
             <button
                 onClick={() => navigate('/dictionary')}
-                className="flex items-center text-gray-400 hover:text-cyber-blue transition-colors gap-2"
+                className="flex items-center text-cyber-text-secondary hover:text-cyber-blue transition-colors gap-2"
             >
                 <ChevronLeft size={20} /> Back to Matrix
             </button>
 
-            <h1 className="text-3xl font-display font-bold text-white mb-2">Tactic Analysis</h1>
+            <h1 className="text-3xl font-display font-bold text-cyber-text-primary mb-2">Tactic Analysis</h1>
 
             {loading ? (
                 <div className="text-cyber-blue animate-pulse">Decryption in progress...</div>

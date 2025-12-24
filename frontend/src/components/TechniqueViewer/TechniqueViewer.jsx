@@ -8,10 +8,10 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
   if (!description) {
     return (
       <div>
-        <h3 className="text-xl font-bold text-white mb-2">
-          {name} <span className="text-xs font-mono text-gray-500 ml-2">({mitre_id})</span>
+        <h3 className="text-xl font-bold text-cyber-text-primary mb-2">
+          {name} <span className="text-xs font-mono text-cyber-text-secondary ml-2">({mitre_id})</span>
         </h3>
-        <p className="text-gray-400 text-sm">No specific intelligence available.</p>
+        <p className="text-cyber-text-secondary text-sm">No specific intelligence available.</p>
       </div>
     );
   }
@@ -203,14 +203,15 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
 
   return (
     <div className="space-y-2 w-full">
-      <h3 className="text-xl font-bold text-white mb-3">
-        {name} <span className="text-xs font-mono text-gray-500 ml-2">({mitre_id})</span>
+      <h3 className="text-xl font-bold text-cyber-text-primary mb-3">
+        {name} <span className="text-xs font-mono text-cyber-text-secondary ml-2">({mitre_id})</span>
       </h3>
 
       <div className="space-y-3">
         {!isExpanded ? (
           <div>
-            <p className="text-gray-300 text-sm leading-relaxed">{preview}</p>
+            {/* CHANGED: text-gray-300 -> text-cyber-text-secondary */}
+            <p className="text-cyber-text-secondary text-sm leading-relaxed">{preview}</p>
             <button
               onClick={() => setIsExpanded(true)}
               className="mt-2 inline-flex items-center gap-1 text-cyber-purple hover:text-cyber-purple/80 text-xs font-semibold transition-colors"
@@ -222,7 +223,8 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
         ) : (
           <div className="space-y-4">
             {parsedElements.map((elem) => (
-              <p key={elem.key} className="text-gray-300 text-sm leading-relaxed">
+              /* CHANGED: text-gray-300 -> text-cyber-text-secondary */
+              <p key={elem.key} className="text-cyber-text-secondary text-sm leading-relaxed">
                 {elem.parts.map((part, partIdx) => (
                   <React.Fragment key={partIdx}>
                     {renderPart(part)}
@@ -234,10 +236,10 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
 
             {citations.length > 0 && (
               <div className="mt-6 pt-4 border-t border-gray-700/50 space-y-2">
-                <p className="text-xs text-gray-500 font-semibold uppercase tracking-wider">References:</p>
+                <p className="text-xs text-cyber-text-secondary font-semibold uppercase tracking-wider">References:</p>
                 <ul className="space-y-1">
                   {citations.map((citation, idx) => (
-                    <li key={idx} className="text-xs text-gray-400">
+                    <li key={idx} className="text-xs text-cyber-text-secondary">
                       <span className="text-cyber-purple font-semibold">[{idx + 1}]</span> {citation}
                     </li>
                   ))}

@@ -29,11 +29,11 @@ function Library() {
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
-          className="text-3xl font-display font-bold text-white mb-2"
+          className="text-3xl font-display font-bold text-cyber-text-primary mb-2"
         >
           Mission Library
         </motion.h2>
-        <p className="text-gray-400 font-body mb-8">Select a specialized learning path to begin your training operations.</p>
+        <p className="text-cyber-text-secondary font-body mb-8">Select a specialized learning path to begin your training operations.</p>
 
         {loading ? (
           <p className="text-cyber-blue animate-pulse font-mono">Loading mission parameters...</p>
@@ -51,12 +51,12 @@ function Library() {
                 whileHover={{ scale: 1.02 }}
               >
                 {/* Number Watermark */}
-                <div className="absolute -top-4 -right-4 text-9xl font-display font-black text-white/5 z-0 group-hover:text-cyber-purple/10 transition-colors">
+                <div className="absolute -top-4 -right-4 text-9xl font-display font-black text-cyber-text-primary/5 z-0 group-hover:text-cyber-purple/10 transition-colors">
                   {i + 1}
                 </div>
 
                 <div className="relative z-10">
-                  <h3 className="text-2xl font-display font-bold text-white mb-2 group-hover:text-cyber-purple transition-colors">
+                  <h3 className="text-2xl font-display font-bold text-cyber-text-primary mb-2 group-hover:text-cyber-purple transition-colors">
                     {path.title}
                   </h3>
 
@@ -70,7 +70,7 @@ function Library() {
                     <span className="text-xs text-cyber-muted font-mono">• {path.total_duration_hours || '2'}H EST</span>
                   </div>
 
-                  <p className="text-gray-400 text-sm mb-6 line-clamp-3 font-body leading-relaxed">
+                  <p className="text-cyber-text-secondary text-sm mb-6 line-clamp-3 font-body leading-relaxed">
                     {path.description || "Mission details classified."}
                   </p>
 

@@ -15,7 +15,8 @@ function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-40 backdrop-blur bg-cyber-bg/80 border-b border-cyber-border transition-colors duration-300">
+    // FIXED: bg-black/70 -> bg-cyber-bg/80
+    <nav className="sticky top-0 z-40 backdrop-blur-md bg-cyber-bg/80 border-b border-cyber-border transition-colors duration-300">
       <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
 
         {/* Logo */}
@@ -34,7 +35,7 @@ function Navbar() {
               <HashLink
                 smooth
                 to={`#${item.toLowerCase()}`}
-                className="text-cyber-text-muted hover:text-cyber-blue transition uppercase"
+                className="text-cyber-text-muted hover:text-cyber-blue transition uppercase font-medium"
               >
                 {item}
               </HashLink>
@@ -46,9 +47,10 @@ function Navbar() {
         <div className="flex items-center gap-3">
           {user ? (
             <>
-              <div className="flex items-center gap-2 px-3 py-1.5 rounded-lg border border-cyber-border bg-cyber-card/50 backdrop-blur transition-all duration-300">
+              <div className="flex items-center gap-2 px-3 py-1.5 rounded-xl border border-cyber-border bg-cyber-card/50 backdrop-blur transition-all duration-300">
                 <div className="relative flex items-center gap-1.5">
                   <div className="w-2.5 h-2.5 rounded-full bg-cyber-blue animate-pulse" />
+                  {/* FIXED: text-cyber-text-secondary -> text-cyber-text-secondary */}
                   <span className="text-xs font-mono text-cyber-text-secondary">
                     <span className="text-cyber-blue font-semibold">
                       {user.username}
@@ -64,15 +66,14 @@ function Navbar() {
                 onClick={handleLogout}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
-                className="px-4 py-1.5 rounded-lg text-sm font-medium
+                className="px-4 py-1.5 rounded-xl text-sm font-medium
                            bg-gradient-to-r from-cyber-purple to-cyber-blue
-                           text-white shadow-glow hover:shadow-blueglow transition-all duration-300"
+                           text-cyber-text-primary shadow-glow hover:shadow-blueglow transition-all duration-300"
               >
                 Logout
               </motion.button>
             </>
           ) : (
-             // You can add a login button here if user is null
             <span className="text-xs text-cyber-text-muted">Loading...</span>
           )}
         </div>

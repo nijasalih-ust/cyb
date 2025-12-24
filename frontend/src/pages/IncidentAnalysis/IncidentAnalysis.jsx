@@ -138,12 +138,12 @@ const IncidentAnalysisPage = () => {
   // Learning Path View
   if (currentView === 'learning-path') {
     return (
-      <div className="min-h-screen bg-black text-white p-8">
+      <div className="min-h-screen bg-black text-cyber-text-primary p-8">
         <div className="max-w-7xl mx-auto">
           {/* Header */}
           <div className="flex justify-between items-start mb-12">
             <div>
-              <h1 className="text-4xl font-bold text-white mb-2">Learning Path: SOC Analyst Level 1</h1>
+              <h1 className="text-4xl font-bold text-cyber-text-primary mb-2">Learning Path: SOC Analyst Level 1</h1>
             </div>
           </div>
 
@@ -161,7 +161,7 @@ const IncidentAnalysisPage = () => {
                 <h3 className="text-2xl font-bold mb-2 group-hover:text-purple-400 transition">
                   {operation.title}
                 </h3>
-                <p className="text-gray-400">{operation.description}</p>
+                <p className="text-cyber-text-secondary">{operation.description}</p>
               </button>
             ))}
           </div>
@@ -173,12 +173,12 @@ const IncidentAnalysisPage = () => {
   // Briefing View
   if (currentView === 'briefing' && currentOperation) {
     return (
-      <div className="min-h-screen bg-black text-white p-8">
+      <div className="min-h-screen bg-black text-cyber-text-primary p-8">
         <div className="max-w-7xl mx-auto">
           {/* Back Button */}
           <button
             onClick={handleBackToLearningPath}
-            className="mb-6 text-gray-400 hover:text-white transition flex items-center gap-2"
+            className="mb-6 text-cyber-text-secondary hover:text-cyber-text-primary transition flex items-center gap-2"
           >
             <ArrowLeft size={20} />
             Back to Learning Path
@@ -186,7 +186,7 @@ const IncidentAnalysisPage = () => {
 
           {/* Header */}
           <div className="mb-8">
-            <p className="text-gray-400 text-sm mb-2 tracking-wider">OPERATION</p>
+            <p className="text-cyber-text-secondary text-sm mb-2 tracking-wider">OPERATION</p>
             <h1 className="text-4xl font-bold">{currentOperation.title}</h1>
           </div>
 
@@ -195,7 +195,7 @@ const IncidentAnalysisPage = () => {
             <button className="px-6 py-2 bg-purple-600 rounded-lg font-medium">
               1. Briefing
             </button>
-            <button className="px-6 py-2 bg-gray-800 rounded-lg font-medium text-gray-400">
+            <button className="px-6 py-2 bg-gray-800 rounded-lg font-medium text-cyber-text-secondary">
               2. Simulation
             </button>
           </div>
@@ -242,12 +242,12 @@ const IncidentAnalysisPage = () => {
   // Simulation View
   if (currentView === 'simulation' && currentOperation) {
     return (
-      <div className="min-h-screen bg-black text-white p-8">
+      <div className="min-h-screen bg-black text-cyber-text-primary p-8">
         <div className="max-w-7xl mx-auto">
           {/* Back Button */}
           <button
             onClick={() => setCurrentView('briefing')}
-            className="mb-6 text-gray-400 hover:text-white transition flex items-center gap-2"
+            className="mb-6 text-cyber-text-secondary hover:text-cyber-text-primary transition flex items-center gap-2"
           >
             <ArrowLeft size={20} />
             Back to Briefing
@@ -255,7 +255,7 @@ const IncidentAnalysisPage = () => {
 
           {/* Header */}
           <div className="mb-8">
-            <p className="text-gray-400 text-sm mb-2 tracking-wider">OPERATION</p>
+            <p className="text-cyber-text-secondary text-sm mb-2 tracking-wider">OPERATION</p>
             <h1 className="text-4xl font-bold">{currentOperation.title}</h1>
           </div>
 
@@ -263,7 +263,7 @@ const IncidentAnalysisPage = () => {
           <div className="flex gap-3 mb-8">
             <button 
               onClick={() => setCurrentView('briefing')}
-              className="px-6 py-2 bg-gray-800 rounded-lg font-medium text-gray-400 hover:text-white transition"
+              className="px-6 py-2 bg-gray-800 rounded-lg font-medium text-cyber-text-secondary hover:text-cyber-text-primary transition"
             >
               1. Briefing
             </button>
@@ -291,7 +291,7 @@ const IncidentAnalysisPage = () => {
                     <div className="w-3 h-3 rounded-full bg-yellow-500"></div>
                     <div className="w-3 h-3 rounded-full bg-green-500"></div>
                   </div>
-                  <span className="text-gray-400 text-sm ml-2">System Logs</span>
+                  <span className="text-cyber-text-secondary text-sm ml-2">System Logs</span>
                 </div>
                 <div className="p-4 font-mono text-sm h-96 overflow-y-auto bg-black/50">
                   {logs.map((log, index) => (

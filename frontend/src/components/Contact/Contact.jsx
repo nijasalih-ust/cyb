@@ -87,7 +87,7 @@ function Contact() {
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
           className="w-full py-2 rounded-lg font-medium bg-gradient-to-r
-                     from-cyber-purple to-cyber-blue text-white shadow-glow flex items-center justify-center gap-2"
+                     from-cyber-purple to-cyber-blue text-cyber-text-primary shadow-glow flex items-center justify-center gap-2"
         >
           Submit <span className="text-lg">→</span>
         </motion.button>

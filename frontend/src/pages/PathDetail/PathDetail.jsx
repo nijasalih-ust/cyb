@@ -38,7 +38,7 @@ const PathDetail = () => {
         <div className="max-w-5xl mx-auto space-y-8">
             <button
                 onClick={() => navigate('/library')}
-                className="flex items-center text-gray-400 hover:text-cyber-blue transition-colors gap-2"
+                className="flex items-center text-cyber-text-secondary hover:text-cyber-blue transition-colors gap-2"
             >
                 <ChevronLeft size={20} /> Back to Library
             </button>
@@ -50,8 +50,8 @@ const PathDetail = () => {
             >
                 <div className="flex justify-between items-start mb-6">
                     <div>
-                        <h1 className="text-4xl font-display font-bold text-white mb-2">{pathData.title}</h1>
-                        <p className="text-gray-400 max-w-2xl">{pathData.description}</p>
+                        <h1 className="text-4xl font-display font-bold text-cyber-text-primary mb-2">{pathData.title}</h1>
+                        <p className="text-cyber-text-secondary max-w-2xl">{pathData.description}</p>
                     </div>
                     <div className="flex flex-col items-end">
                         <span className="text-cyber-purple font-mono text-xl font-bold">{pathData.modules?.length || 0} Modules</span>
@@ -63,7 +63,7 @@ const PathDetail = () => {
                 <div className="space-y-4">
                     {pathData.modules && pathData.modules.map((module, index) => (
                         <div key={module.id} className="bg-black/20 rounded-xl p-4 border border-white/5">
-                            <h3 className="text-xl font-bold text-white mb-4">Module {index + 1}: {module.title || 'Untitled Module'}</h3>
+                            <h3 className="text-xl font-bold text-cyber-text-primary mb-4">Module {index + 1}: {module.title || 'Untitled Module'}</h3>
                             <div className="space-y-2">
                                 {module.lessons && module.lessons.map((lesson) => (
                                     <div
@@ -75,7 +75,7 @@ const PathDetail = () => {
                                             <div className="w-8 h-8 rounded-full bg-cyber-blue/10 flex items-center justify-center text-cyber-blue">
                                                 <Play size={14} />
                                             </div>
-                                            <span className="text-gray-200 font-medium group-hover:text-white transition-colors">{lesson.title}</span>
+                                            <span className="text-gray-200 font-medium group-hover:text-cyber-text-primary transition-colors">{lesson.title}</span>
                                         </div>
                                         <span className="text-xs text-gray-500 font-mono">15 MIN</span>
                                     </div>
