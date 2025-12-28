@@ -14,7 +14,8 @@ DB_PASSWORD=
 DB_HOST=
 DB_PORT=
 "
-#run seed.py
+#seeding commands
+python manage.py seed_mitre_from_file --file ./enterprise-attack.json
 python manage.py shell 
 >>> from api.seed import run
 >>> run()
