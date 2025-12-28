@@ -43,7 +43,7 @@ class RefreshToken(models.Model):
 
 # 2. Framework (static data)
 class KillChainPhase(models.Model):
-    id = models.IntegerField(primary_key=True)
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     step_number = models.IntegerField(unique=True)
     name = models.CharField(max_length=255, unique=True)
     description = models.TextField(blank=True, null=True)
