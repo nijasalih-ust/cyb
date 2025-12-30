@@ -13,6 +13,7 @@ const Sidebar = () => {
         { name: 'Mission Library', path: '/library', icon: BookOpen },
         { name: 'Threat Matrix', path: '/dictionary', icon: Database },
         { name: 'Assessment', path: '/assessment', icon: Shield },
+        { name: 'SiemAssessment', path: '/Siem_assessment', icon: Shield }
     ];
 
     return (

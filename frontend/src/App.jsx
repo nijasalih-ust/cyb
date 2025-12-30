@@ -1,7 +1,5 @@
 import React from "react";
-import { Routes, Route, Navigate, Outlet } from "react-router-dom";
-import { AuthProvider } from "./context/AuthContext";
-
+import { Routes, Route, Navigate } from "react-router-dom";
 
 import Login from "./pages/Login/Login";
 import Landing from "./pages/Landing/Landing";
@@ -14,32 +12,37 @@ import Layout from "./components/Layout/Layout";
 import PathDetail from "./pages/PathDetail/PathDetail";
 import TacticDetail from "./pages/TacticDetail/TacticDetail";
 import LessonDetail from "./pages/LessonDetail/LessonDetail";
+import SIEMAssessment from "./pages/SiemAssessment/SiemAssessment";
 
-// ... imports
+import Layout from "./components/Layout/Layout";
+import SIEM from "./components/SIEM/SIEM";
 
 function App() {
   return (
-    <AuthProvider>
-      <Routes>
-        <Route path="/" element={<Navigate to="/login" replace />} />
-        <Route path="/login" element={<Login />} />
+    <Routes>
+      {/* Optional login page */}
+      <Route path="/login" element={<Login />} />
 
-        <Route element={<ProtectedRoute />}>
-          <Route element={<Layout><Outlet /></Layout>}> {/* Layout Wrapper */}
-            <Route path="/landing" element={<Landing />} />
-            <Route path="/library" element={<Library />} />
-            <Route path="/assessment" element={<Assessment />} />
-            <Route path="/dictionary" element={<Dictionary />} />
-            <Route path="/article/:id" element={<ArticleDetail />} />
-            <Route path="/article/:id" element={<ArticleDetail />} />
-            <Route path="/paths/:id" element={<PathDetail />} />
-            <Route path="/lessons/:id" element={<LessonDetail />} />
-            <Route path="/dictionary/:id" element={<TacticDetail />} />
-            {/* Add other protected routes here */}
-          </Route>
-        </Route>
-      </Routes>
-    </AuthProvider>
+      {/* Layout routes */}
+      <Route element={<Layout />}>
+        <Route path="/landing" element={<Landing />} />
+        <Route path="/library" element={<Library />} />
+        <Route path="/assessment" element={<Assessment />} />
+        <Route path="/dictionary" element={<Dictionary />} />
+        <Route path="/Siem_assessment" element={<SIEMAssessment />} />
+        <Route path="/article/:id" element={<ArticleDetail />} />
+        <Route path="/paths/:id" element={<PathDetail />} />
+        <Route path="/lessons/:id" element={<LessonDetail />} />
+        <Route path="/dictionary/:id" element={<TacticDetail />} />
+      </Route>
+
+      {/* Fullscreen – no layout */}
+      <Route path="/siem/:id" element={<SIEM />} />
+
+      {/* Defaults */}
+      <Route path="/" element={<Navigate to="/landing" replace />} />
+      <Route path="*" element={<Navigate to="/landing" replace />} />
+    </Routes>
   );
 }
 
