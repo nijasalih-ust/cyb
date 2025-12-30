@@ -19,3 +19,341 @@ python manage.py seed_mitre_from_file --file ./enterprise-attack.json
 python manage.py shell 
 >>> from api.seed import run
 >>> run()
+
+
+---------------------------
+Seeder_ai.py
+ 
+import json
+
+import requests
+
+import os
+
+import time
+ 
+# CONFIGURATION
+
+# ---------------------------------------------------------
+
+SOURCE_FILE = "../enterprise-attack.json" # Path to raw MITRE data
+
+OUTPUT_FILE = "curriculum_data.json"
+
+OLLAMA_URL = "http://localhost:11434/api/generate"
+
+MODEL = "llama3" # or 'phi3', 'mistral'
+
+LIMIT_PER_TACTIC = 2 # Set to 0 for ALL techniques (WARNING: Will take hours)
+
+# ---------------------------------------------------------
+ 
+def load_mitre_data():
+
+    """Reads the raw STIX file to identify Tactics and Techniques."""
+
+    print(f"📂 Loading {SOURCE_FILE}...")
+
+    with open(SOURCE_FILE, 'r', encoding='utf-8') as f:
+
+        data = json.load(f)
+
+    objects = data.get('objects', [])
+
+    # 1. Get Tactics (Modules)
+
+    tactics = []
+
+    for obj in objects:
+
+        if obj.get('type') == 'x-mitre-tactic':
+
+            tactics.append({
+
+                "name": obj.get('name'),
+
+                "x_mitre_shortname": obj.get('x_mitre_shortname'),
+
+                "external_id": obj['external_references'][0]['external_id']
+
+            })
+
+    # Sort tactics to make a logical flow
+
+    tactics.sort(key=lambda x: x['name'])
+ 
+    # 2. Get Techniques (Lessons)
+
+    techniques_map = {t['x_mitre_shortname']: [] for t in tactics}
+
+    for obj in objects:
+
+        if obj.get('type') == 'attack-pattern' and not obj.get('revoked'):
+
+            # Find which tactic this belongs to
+
+            tactic_refs = obj.get('kill_chain_phases', [])
+
+            mitre_id = next((ref['external_id'] for ref in obj.get('external_references', []) if ref['source_name'] == 'mitre-attack'), None)
+
+            if not mitre_id: continue
+ 
+            for ref in tactic_refs:
+
+                phase = ref.get('phase_name')
+
+                if phase in techniques_map:
+
+                    techniques_map[phase].append({
+
+                        "name": obj.get('name'),
+
+                        "description": obj.get('description', ''),
+
+                        "mitre_id": mitre_id
+
+                    })
+
+    return tactics, techniques_map
+ 
+def generate_lesson_content(tech_name, tech_desc):
+
+    """Asks Ollama to write the lesson details."""
+
+    prompt = f"""
+
+    Act as a cybersecurity instructor. Create a short lesson summary for the attack technique: "{tech_name}".
+
+    Technical Context: {tech_desc[:500]}...
+
+    Return ONLY a JSON object (no markdown, no explanations) with this exact structure:
+
+    {{
+
+        "title": "A short, action-oriented title for the lesson",
+
+        "description": "Two sentences explaining what the attacker does and why it matters.",
+
+        "key_indicators": "One specific log event or artifact to look for."
+
+    }}
+
+    """
+
+    payload = {
+
+        "model": MODEL,
+
+        "prompt": prompt,
+
+        "stream": False,
+
+        "format": "json" 
+
+    }
+ 
+    try:
+
+        response = requests.post(OLLAMA_URL, json=payload)
+
+        if response.status_code == 200:
+
+            return json.loads(response.json()['response'])
+
+    except Exception as e:
+
+        print(f"   ⚠️ AI Error: {e}")
+
+    # Fallback if AI fails
+
+    return {
+
+        "title": f"Understanding {tech_name}",
+
+        "description": "Detailed analysis of this technique.",
+
+        "key_indicators": "Review system logs."
+
+    }
+ 
+def main():
+
+    tactics, tech_map = load_mitre_data()
+
+    # Define the Root Path
+
+    curriculum = [{
+
+        "title": "MITRE ATT&CK Enterprise Mastery",
+
+        "slug": "mitre-enterprise-mastery",
+
+        "type": "standard",
+
+        "modules": []
+
+    }]
+ 
+    print(f"🤖 Starting Generation using {MODEL}...")
+
+    print(f"   Target: {len(tactics)} Modules (Tactics)")
+ 
+    for i, tactic in enumerate(tactics, 1):
+
+        shortname = tactic['x_mitre_shortname']
+
+        techs = tech_map.get(shortname, [])
+
+        # Apply Limit
+
+        if LIMIT_PER_TACTIC > 0:
+
+            techs = techs[:LIMIT_PER_TACTIC]
+ 
+        if not techs: continue
+ 
+        print(f"\n[{i}] Processing Module: {tactic['name']} ({len(techs)} lessons)")
+ 
+        module_data = {
+
+            "title": f"{tactic['name']} Tactics",
+
+            "order": i,
+
+            "lessons": []
+
+        }
+ 
+        for j, tech in enumerate(techs, 1):
+
+            print(f"   ... Generating: {tech['mitre_id']} - {tech['name']}")
+
+            ai_data = generate_lesson_content(tech['name'], tech['description'])
+
+            lesson_data = {
+
+                "title": ai_data['title'],
+
+                "order": j,
+
+                "router_link": f"/lessons/{tech['mitre_id'].lower()}",
+
+                "description": ai_data['description'],
+
+                "key_indicators": ai_data['key_indicators'],
+
+                "mitre_id_link": tech['mitre_id'] # Important for linking later
+
+            }
+
+            module_data['lessons'].append(lesson_data)
+
+        curriculum[0]['modules'].append(module_data)
+ 
+    # Save to file
+
+    print(f"\n💾 Saving to {OUTPUT_FILE}...")
+
+    with open(OUTPUT_FILE, 'w', encoding='utf-8') as f:
+
+        json.dump(curriculum, f, indent=4)
+
+    print("✅ Done!")
+ 
+if __name__ == "__main__":
+
+    main() 
+ 
+example out .json
+ 
+[     {         "title": "MITRE ATT&CK Enterprise Mastery",         "slug": "mitre-enterprise-mastery",         "type": "standard",         "modules": [             {                 "title": "Initial Access Tactics",                 "order": 1,                 "lessons": [                     {                         "title": "Detecting Drive-by Compromise",                         "order": 1,                         "router_link": "/lessons/t1189",                         "description": "Adversaries gain access by compromising websites that users visit. This allows code execution without the user downloading a file manually.",                         "key_indicators": "Unexpected browser processes spawning cmd.exe or powershell.exe.",                         "mitre_id_link": "T1189"                     }                 ]             }         ]     } ]
+ 
+scripts/2_seed_from_json.py
+ 
+import json
+import os
+import sys
+import django
+ 
+# 1. SETUP DJANGO ENVIRONMENT
+# ---------------------------------------------------------
+# Add the backend folder to sys.path so we can find 'backend' module
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../backend')))
+ 
+# Set the settings module
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'backend.settings')
+ 
+# Initialize Django
+django.setup()
+# ---------------------------------------------------------
+ 
+from api.models import Path, Module, Lesson, MitreTechnique, LessonTechniqueMap
+ 
+INPUT_FILE = "curriculum_data.json"
+ 
+def seed_db():
+    print(f"📂 Reading {INPUT_FILE}...")
+    
+    if not os.path.exists(INPUT_FILE):
+        print("❌ Error: JSON file not found. Run the generator script first.")
+        return
+ 
+    with open(INPUT_FILE, 'r', encoding='utf-8') as f:
+        data = json.load(f)
+ 
+    print("🚀 Seeding Database...")
+ 
+    for path_item in data:
+        # 1. Create Path
+        path_obj, created = Path.objects.update_or_create(
+            slug=path_item['slug'],
+            defaults={
+                'title': path_item['title'], 
+                'type': path_item['type']
+            }
+        )
+        status = "Created" if created else "Updated"
+        print(f"[{status}] Path: {path_obj.title}")
+ 
+        for mod_item in path_item['modules']:
+            # 2. Create Module
+            mod_obj, _ = Module.objects.update_or_create(
+                path=path_obj,
+                order_index=mod_item['order'],
+                defaults={'title': mod_item['title']}
+            )
+            print(f"   -> Module: {mod_obj.title}")
+ 
+            for lesson_item in mod_item['lessons']:
+                # 3. Create Lesson
+                lesson_obj, _ = Lesson.objects.update_or_create(
+                    module=mod_obj,
+                    order_index=lesson_item['order'],
+                    defaults={
+                        'title': lesson_item['title'],
+                        'description': lesson_item['description'],
+                        'key_indicators': lesson_item['key_indicators'],
+                        'router_link': lesson_item['router_link'],
+                        'content_type': 'text'
+                    }
+                )
+ 
+                # 4. Link to MITRE Technique
+                mitre_id = lesson_item.get('mitre_id_link')
+                if mitre_id:
+                    # Find the technique in DB
+                    tech = MitreTechnique.objects.filter(mitre_id=mitre_id).first()
+                    if tech:
+                        LessonTechniqueMap.objects.get_or_create(
+                            lesson=lesson_obj,
+                            technique=tech
+                        )
+                        # print(f"      Linked to {mitre_id}")
+                    else:
+                        print(f"      ⚠️ Warning: Technique {mitre_id} not found in DB")
+ 
+    print("✅ Seeding Complete!")
+ 
+if __name__ == "__main__":
+    seed_db()
+ 
