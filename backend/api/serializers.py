@@ -2,20 +2,23 @@ from django.contrib.auth import get_user_model
 from rest_framework import serializers
 from .models import (
     Path, Module, Lesson,
-    KillChainPhase, MitreTactic, MitreTechnique,
-    LessonTechniqueMap, TacticPhaseMap,
+    MitreTactic, MitreTechnique, LessonTechniqueMap,
     UserProgress, NavBotLog
 )
+
 User = get_user_model()
 
-
+# ==========================================
+# 1. User & Auth (Preserved Custom Logic)
+# ==========================================
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "password", "email", "role", "is_verified"]
+        fields = ["id", "username", "password", "email", "role", "is_verified", "date_joined"]
         extra_kwargs = {
             "password": {"write_only": True},
             "email": {"required": True},
+            "date_joined": {"read_only": True}
         }
 
     def create(self, validated_data):
@@ -26,12 +29,9 @@ class UserSerializer(serializers.ModelSerializer):
         return user
 
 
-class KillChainPhaseSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = KillChainPhase
-        fields = ["id", "step_number", "name", "description"]
-
-
+# ==========================================
+# 2. MITRE Framework
+# ==========================================
 class MitreTacticSerializer(serializers.ModelSerializer):
     class Meta:
         model = MitreTactic
@@ -39,40 +39,42 @@ class MitreTacticSerializer(serializers.ModelSerializer):
 
 
 class MitreTechniqueSerializer(serializers.ModelSerializer):
-    tactic_name = serializers.CharField(source='tactic.name', read_only=True)
+    tactic = MitreTacticSerializer(read_only=True)
     
     class Meta:
         model = MitreTechnique
-        fields = ["id", "mitre_id", "name", "description", "tactic", "tactic_name"]
+        fields = ["id", "mitre_id", "name", "description", "tactic"]
 
 
-class LessonTechniqueMapSerializer(serializers.ModelSerializer):
+# ==========================================
+# 3. Learning Content (Nested Hierarchy)
+# ==========================================
+class LessonTechniqueSerializer(serializers.ModelSerializer):
+    # Serializes the technique details inside a lesson
     technique = MitreTechniqueSerializer(read_only=True)
     
     class Meta:
         model = LessonTechniqueMap
-        fields = ["id", "lesson", "technique"]
-
+        fields = ["technique"]
 
 class LessonSerializer(serializers.ModelSerializer):
-    techniques = serializers.SerializerMethodField()
+    # Nested techniques to show what this lesson covers
+    techniques = LessonTechniqueSerializer(source='technique_links', many=True, read_only=True)
     
     class Meta:
         model = Lesson
-        fields = ["id", "module", "title", "router_link", "description", "key_indicators", "techniques"]
-    
-    def get_techniques(self, obj):
-        technique_links = obj.technique_links.all()
-        return MitreTechniqueSerializer([link.technique for link in technique_links], many=True).data
-
+        fields = [
+            "id", "module", "title", "content_type", 
+            "router_link", "order_index", "description", 
+            "key_indicators", "techniques"
+        ]
 
 class ModuleSerializer(serializers.ModelSerializer):
     lessons = LessonSerializer(many=True, read_only=True)
     
     class Meta:
         model = Module
-        fields = ["id", "path", "order_index", "title", "lessons"]
-
+        fields = ["id", "path", "title", "order_index", "lessons"]
 
 class PathSerializer(serializers.ModelSerializer):
     modules = ModuleSerializer(many=True, read_only=True)
@@ -82,16 +84,14 @@ class PathSerializer(serializers.ModelSerializer):
         fields = ["id", "title", "slug", "type", "modules"]
 
 
-class TacticPhaseMapSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = TacticPhaseMap
-        fields = ["id", "tactic", "phase"]
-
-
+# ==========================================
+# 4. User Progress & Logs
+# ==========================================
 class UserProgressSerializer(serializers.ModelSerializer):
     class Meta:
         model = UserProgress
-        fields = ["id", "user", "lesson", "status"]
+        fields = ["id", "user", "lesson", "status", "created_at", "updated_at", "completed_at"]
+        read_only_fields = ["created_at", "updated_at", "completed_at"]
 
 
 class NavBotLogSerializer(serializers.ModelSerializer):

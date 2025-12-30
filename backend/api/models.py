@@ -2,20 +2,12 @@
 import uuid
 from django.db import models
 from django.contrib.auth.models import AbstractUser
+from django.utils import timezone
 
-'''
-# notes
-
-class Note(models.Model):
-    title = models.CharField(max_length=100)
-    content = models.TextField()
-    created_at = models.DateTimeField(auto_now_add=True)
-    author = models.ForeignKey(User, on_delete=models.CASCADE, related_name="notes")
-
-    def __str__(self):
-        return self.title'''
-
+# ============================================================================
 # 1. Identity & Auth
+# ============================================================================
+
 class User(AbstractUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
@@ -41,16 +33,9 @@ class RefreshToken(models.Model):
         db_table = "refresh_tokens"
 
 
-# 2. Framework (static data)
-class KillChainPhase(models.Model):
-    id = models.IntegerField(primary_key=True)
-    step_number = models.IntegerField(unique=True)
-    name = models.CharField(max_length=255, unique=True)
-    description = models.TextField(blank=True, null=True)
-
-    class Meta:
-        db_table = "kill_chain_phases"
-
+# ============================================================================
+# 2. Framework (MITRE ATT&CK)
+# ============================================================================
 
 class MitreTactic(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
@@ -60,18 +45,8 @@ class MitreTactic(models.Model):
     class Meta:
         db_table = "mitre_tactics"
 
-
-class TacticPhaseMap(models.Model):
-    tactic = models.ForeignKey(
-        MitreTactic, on_delete=models.CASCADE, related_name="phase_links"
-    )
-    phase = models.ForeignKey(
-        KillChainPhase, on_delete=models.CASCADE, related_name="tactic_links"
-    )
-
-    class Meta:
-        db_table = "tactic_phase_map"
-        unique_together = (("tactic", "phase"),)
+    def __str__(self):
+        return f"{self.mitre_id} - {self.name}"
 
 
 class MitreTechnique(models.Model):
@@ -86,19 +61,25 @@ class MitreTechnique(models.Model):
     class Meta:
         db_table = "mitre_techniques"
 
+    def __str__(self):
+        return f"{self.mitre_id} - {self.name}"
 
-# 3. Learning Content
+
+# ============================================================================
+# 3. Learning Content Hierarchy (Path -> Module -> Lesson)
+# ============================================================================
+
 class Path(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
-    type = models.CharField(
-        max_length=50,
-        choices=(("standard", "Standard"), ("campaign", "Campaign")),
-    )
+    type = models.CharField(max_length=50)  # e.g., 'offensive', 'defensive'
 
     class Meta:
         db_table = "paths"
+
+    def __str__(self):
+        return self.title
 
 
 class Module(models.Model):
@@ -106,27 +87,40 @@ class Module(models.Model):
     path = models.ForeignKey(
         Path, on_delete=models.CASCADE, related_name="modules"
     )
-    order_index = models.IntegerField()
     title = models.CharField(max_length=255)
+    order_index = models.IntegerField()
 
     class Meta:
         db_table = "modules"
         unique_together = (("path", "order_index"),)
+        ordering = ['order_index']
+
+    def __str__(self):
+        return f"{self.path.title} - {self.title}"
+
 
 class Lesson(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     module = models.ForeignKey(
         Module, on_delete=models.CASCADE, related_name="lessons"
     )
-    title = models.CharField(max_length=255, blank=True, null=True)
+    title = models.CharField(max_length=255)
+    content_type = models.CharField(max_length=50, default='text')  # e.g., 'text', 'video', 'lab'
     router_link = models.CharField(max_length=255, blank=True, null=True)
-
-    # NEW FIELDS
+    order_index = models.IntegerField(default=0)
+    
+    # Optional content details
     description = models.TextField(blank=True, null=True)
     key_indicators = models.TextField(blank=True, null=True)
 
     class Meta:
         db_table = "lessons"
+        unique_together = (("module", "order_index"),)
+        ordering = ['order_index']
+
+    def __str__(self):
+        return self.title
+
 
 class LessonTechniqueMap(models.Model):
     lesson = models.ForeignKey(
@@ -140,42 +134,18 @@ class LessonTechniqueMap(models.Model):
         db_table = "lesson_technique_map"
         unique_together = (("lesson", "technique"),)
 
-# Arsenal / Tools
-# Arsenal / Tools - REMOVED
-# class Tool(models.Model):
-#     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-#     name = models.CharField(max_length=255)
-#     description = models.TextField(blank=True, null=True)
-#     category = models.CharField(max_length=100, blank=True, null=True)
-#     link = models.URLField(blank=True, null=True)
-#     
-#     class Meta:
-#         db_table = "tools"
-# quiz module
-class Quiz(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    module = models.OneToOneField(
-        Module, on_delete=models.CASCADE, related_name="quiz"
-    )
-    title = models.CharField(max_length=255)
 
-    class Meta:
-        db_table = "quizzes"
+# ============================================================================
+# 4. User Progress & Logs
+# ============================================================================
 
-class QuizQuestion(models.Model):
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-    quiz = models.ForeignKey(
-        Quiz, on_delete=models.CASCADE, related_name="questions"
-    )
-    question_text = models.TextField()
-    options = models.JSONField()
-    correct_answer = models.CharField(max_length=255)
-
-    class Meta:
-        db_table = "quiz_questions"
-
-# 4. User Progress & Navigator Logs
 class UserProgress(models.Model):
+    STATUS_CHOICES = (
+        ("not_started", "Not Started"),
+        ("in_progress", "In Progress"),
+        ("completed", "Completed"),
+    )
+
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.ForeignKey(
         User, on_delete=models.CASCADE, related_name="progress"
@@ -185,11 +155,24 @@ class UserProgress(models.Model):
     )
     status = models.CharField(
         max_length=50,
-        choices=(("completed", "Completed"),),
+        choices=STATUS_CHOICES,
+        default="not_started"
     )
+    
+    # Timestamps for analytics
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    completed_at = models.DateTimeField(null=True, blank=True)
 
     class Meta:
         db_table = "user_progress"
+        unique_together = (("user", "lesson"),)
+
+    def save(self, *args, **kwargs):
+        # Auto-set completed_at when status changes to completed
+        if self.status == 'completed' and not self.completed_at:
+            self.completed_at = timezone.now()
+        super().save(*args, **kwargs)
 
 
 class NavBotLog(models.Model):

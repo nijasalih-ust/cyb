@@ -1,202 +1,147 @@
 from django.contrib.auth import get_user_model
-from rest_framework import generics
+from django.shortcuts import get_object_or_404
+from rest_framework import viewsets, generics, permissions, status
+from rest_framework.views import APIView
 from rest_framework.response import Response
-from rest_framework.permissions import AllowAny, IsAuthenticated
+from rest_framework.decorators import action
 
-from .serializers import (
-    UserSerializer, PathSerializer, ModuleSerializer, LessonSerializer,
-    KillChainPhaseSerializer, MitreTacticSerializer, MitreTechniqueSerializer,
-    LessonTechniqueMapSerializer, TacticPhaseMapSerializer,
-    UserProgressSerializer, NavBotLogSerializer
-)
 from .models import (
     Path, Module, Lesson,
-    KillChainPhase, MitreTactic, MitreTechnique,
-    LessonTechniqueMap, TacticPhaseMap,
+    MitreTactic, MitreTechnique,
     UserProgress, NavBotLog
+)
+from .serializers import (
+    UserSerializer, PathSerializer, ModuleSerializer, LessonSerializer,
+    MitreTacticSerializer, MitreTechniqueSerializer,
+    UserProgressSerializer, NavBotLogSerializer
 )
 
 User = get_user_model()
 
+# ==========================================
+# 1. User Management
+# ==========================================
 
-# class ToolList(generics.ListCreateAPIView): - REMOVED
-#     queryset = Tool.objects.all()
-#     serializer_class = ToolSerializer
-#     permission_classes = [IsAuthenticated]
-
-
-
+# Preserved: Public registration endpoint
 class CreateUserView(generics.CreateAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+    permission_classes = [permissions.AllowAny]
+
+class UserViewSet(viewsets.ReadOnlyModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAuthenticated]
+
+    @action(detail=False, methods=['get'])
+    def me(self, request):
+        serializer = self.get_serializer(request.user)
+        return Response(serializer.data)
 
 
-class PathListCreate(generics.ListCreateAPIView):
+# ==========================================
+# 2. Content ViewSets (Standard CRUD)
+# ==========================================
+
+class PathViewSet(viewsets.ModelViewSet):
     queryset = Path.objects.all()
     serializer_class = PathSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field = 'slug'
 
-
-class PathDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Path.objects.all()
-    serializer_class = PathSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class ModuleListCreate(generics.ListCreateAPIView):
+class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
     serializer_class = ModuleSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-
-class ModuleDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Module.objects.all()
-    serializer_class = ModuleSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class LessonListCreate(generics.ListCreateAPIView):
+class LessonViewSet(viewsets.ModelViewSet):
     queryset = Lesson.objects.all()
     serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-
-class LessonDetail(generics.RetrieveUpdateDestroyAPIView):
-    queryset = Lesson.objects.all()
-    serializer_class = LessonSerializer
-    permission_classes = [IsAuthenticated]
-
-class KillChainPhaseList(generics.ListAPIView):
-    queryset = KillChainPhase.objects.all()
-    serializer_class = KillChainPhaseSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class MitreTacticList(generics.ListAPIView):
+class MitreTacticViewSet(viewsets.ModelViewSet):
     queryset = MitreTactic.objects.all()
     serializer_class = MitreTacticSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-
-class MitreTechniqueList(generics.ListAPIView):
+class MitreTechniqueViewSet(viewsets.ModelViewSet):
     queryset = MitreTechnique.objects.all()
     serializer_class = MitreTechniqueSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticatedOrReadOnly]
 
-
-class LessonTechniqueMapListCreate(generics.ListCreateAPIView):
-    queryset = LessonTechniqueMap.objects.all()
-    serializer_class = LessonTechniqueMapSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class TacticPhaseMapListCreate(generics.ListCreateAPIView):
-    queryset = TacticPhaseMap.objects.all()
-    serializer_class = TacticPhaseMapSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class UserProgressListCreate(generics.ListCreateAPIView):
-    queryset = UserProgress.objects.all()
+class UserProgressViewSet(viewsets.ModelViewSet):
     serializer_class = UserProgressSerializer
-    permission_classes = [IsAuthenticated]
-
-
-class NavBotLogListCreate(generics.ListCreateAPIView):
-    queryset = NavBotLog.objects.all()
-    serializer_class = NavBotLogSerializer
-    permission_classes = [IsAuthenticated]
-
-'''
-class NoteListCreate(generics.ListCreateAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
+        return UserProgress.objects.filter(user=self.request.user)
 
     def perform_create(self, serializer):
-        if serializer.is_valid():
-            serializer.save(author=self.request.user)
-        else:
-            print(serializer.errors)
+        serializer.save(user=self.request.user)
+
+class NavBotLogViewSet(viewsets.ModelViewSet):
+    queryset = NavBotLog.objects.all()
+    serializer_class = NavBotLogSerializer
+    permission_classes = [permissions.IsAuthenticated]
 
 
-class NoteDelete(generics.DestroyAPIView):
-    serializer_class = NoteSerializer
-    permission_classes = [IsAuthenticated]
+# ==========================================
+# 3. Custom / Legacy Views (Preserved)
+# ==========================================
 
-    def get_queryset(self):
-        user = self.request.user
-        return Note.objects.filter(author=user)
-'''
-class DashboardStatsView(generics.RetrieveAPIView):
-    permission_classes = [IsAuthenticated]
-
-    def get(self, request, *args, **kwargs):
-        user = request.user
-        # Calculate stats
-        mastered_techniques = UserProgress.objects.filter(user=user, status='mastered').count()
-        labs_completed = UserProgress.objects.filter(user=user, status='completed').count()
-        
-        # Calculate XP (Mock calculation)
-        xp = (mastered_techniques * 50) + (labs_completed * 100)
-        
-        # Calculate Level
-        level = 1 + (xp // 500)
-
-        data = {
-            "xp": xp,
-            "level": level,
-            "techniques_mastered": mastered_techniques,
-            "labs_completed": labs_completed,
-            "streak": 0  # Placeholder
-        }
-        return Response(data)
-
+# Preserved: Used for frontend visualizations
 class FrameworkTacticsView(generics.ListAPIView):
     queryset = MitreTactic.objects.all()
     serializer_class = MitreTacticSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def list(self, request, *args, **kwargs):
         queryset = self.get_queryset()
-        serializer = self.get_serializer(queryset, many=True)
-        # Augment data with technique counts if needed, but for now standard serializer
-        # Or using a custom response format as expected by frontend
         data = []
         for tactic in queryset:
             data.append({
                 "id": tactic.id,
                 "mitre_id": tactic.mitre_id,
                 "name": tactic.name,
-                "description": f"Tactics for {tactic.name}", # Placeholder description if not in model
-                "technique_count": MitreTechnique.objects.filter(tactic=tactic).count()
+                "description": f"Tactics for {tactic.name}", 
+                "technique_count": tactic.techniques.count()
             })
         return Response(data)
 
-
+# Preserved: For specific tactic lookups
 class TechniquesByTacticList(generics.ListAPIView):
     serializer_class = MitreTechniqueSerializer
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
         tactic_id = self.kwargs['tactic_id']
         return MitreTechnique.objects.filter(tactic__id=tactic_id)
 
+# Preserved: Dashboard logic (Updated status check to 'completed')
+class DashboardStatsView(generics.RetrieveAPIView):
+    permission_classes = [permissions.IsAuthenticated]
 
-from rest_framework.views import APIView
-from rest_framework import status
-from django.shortcuts import get_object_or_404
+    def get(self, request, *args, **kwargs):
+        user = request.user
+        # Logic update: 'mastered' -> 'completed'
+        completed_lessons = UserProgress.objects.filter(user=user, status='completed').count()
+        
+        # Simple XP Calculation
+        xp = (completed_lessons * 100)
+        level = 1 + (xp // 500)
 
+        data = {
+            "xp": xp,
+            "level": level,
+            "techniques_mastered": completed_lessons, # Using lessons as proxy for now
+            "labs_completed": completed_lessons,
+            "streak": 0 
+        }
+        return Response(data)
+
+# Preserved: Bot Logic
 class NavigatorCommandView(APIView):
-    """Simple navigator command endpoint used by the frontend Navigator component.
-    It accepts POST JSON with `input` (string) and optional `context` and
-    returns a small structured response that the frontend understands.
-    """
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, *args, **kwargs):
         data = request.data or {}
@@ -204,12 +149,10 @@ class NavigatorCommandView(APIView):
         cmd = (cmd_raw or "").strip()
         context = data.get("context", {})
 
-        # simple navigation command: "navigate /some/url"
         if cmd.lower().startswith("navigate "):
             url = cmd.split(" ", 1)[1]
             return Response({"type": "action", "payload": {"action": "navigate", "url": url}})
 
-        # technique detail: "technique T1190" or "show technique T1190"
         if cmd.lower().startswith("technique ") or cmd.lower().startswith("show technique "):
             term = cmd.split(" ", 1)[1]
             try:
@@ -228,30 +171,27 @@ class NavigatorCommandView(APIView):
                 pass
             return Response({"type": "options", "payload": {"message": "Technique not found", "options": []}})
 
-        # stats command
         if cmd.lower() == "stats":
             total = MitreTechnique.objects.count()
-            mastered = 0
-            if request.user and request.user.is_authenticated:
-                mastered = request.user.userprogress_set.filter(status="mastered").count()
-            pct = int((mastered / total) * 100) if total else 0
+            # Logic update: 'mastered' -> 'completed'
+            completed = request.user.progress.filter(status="completed").count()
+            pct = int((completed / total) * 100) if total else 0
             payload = {
                 "percentage": pct,
-                "techniques_mastered": mastered,
+                "techniques_mastered": completed,
                 "techniques_total": total,
                 "current_path": context.get("current_page", ""),
             }
             return Response({"type": "stats", "payload": payload})
 
-        # default
         return Response({"type": "options", "payload": {"message": f"Unrecognized command: {cmd_raw}", "options": []}})
 
+# Preserved: Simple completion endpoint
 class LessonCompleteView(APIView):
-    permission_classes = [IsAuthenticated]
+    permission_classes = [permissions.IsAuthenticated]
 
     def post(self, request, pk, *args, **kwargs):
         lesson = get_object_or_404(Lesson, pk=pk)
-        # Check if already completed
         progress, created = UserProgress.objects.get_or_create(
             user=request.user,
             lesson=lesson,

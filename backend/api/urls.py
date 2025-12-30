@@ -1,90 +1,41 @@
-# api/urls.py
-from django.urls import path
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
 from . import views
 
- # Notes, (if you want to use the /notes put the following commented code into the urlpatterns )
-'''
-path("notes/", views.NoteListCreate.as_view(), name="note-list"),
-    path(
-        "notes/<uuid:pk>/",
-        views.NoteRetrieveUpdateDestroy.as_view(),
-        name="note-detail",
-    ),
-''' 
+# Router handles the standard CRUD endpoints automatically
+router = DefaultRouter()
+router.register(r'users', views.UserViewSet)
+router.register(r'paths', views.PathViewSet)
+router.register(r'modules', views.ModuleViewSet)
+router.register(r'lessons', views.LessonViewSet)
+router.register(r'tactics', views.MitreTacticViewSet)
+router.register(r'techniques', views.MitreTechniqueViewSet)
+router.register(r'progress', views.UserProgressViewSet, basename='user-progress')
+router.register(r'logs', views.NavBotLogViewSet)
+
 urlpatterns = [
- 
-    # Paths / Modules / Lessons
-    path("paths/", views.PathListCreate.as_view(), name="path-list"),
-    path("paths/<uuid:pk>/", views.PathDetail.as_view(), name="path-detail"),
+    # 1. Standard Router URLs
+    path('', include(router.urls)),
 
-    path("modules/", views.ModuleListCreate.as_view(), name="module-list"),
-    path("modules/<uuid:pk>/", views.ModuleDetail.as_view(), name="module-detail"),
+    # 2. Auth Endpoints
+    path("register/", views.CreateUserView.as_view(), name="register"),
 
-    path("lessons/", views.LessonListCreate.as_view(), name="lesson-list"),
-    path("lessons/<uuid:pk>/", views.LessonDetail.as_view(), name="lesson-detail"),
-    path("lessons/<uuid:pk>/complete/", views.LessonCompleteView.as_view(), name="lesson-complete"),
-
-
-    # Framework data
-    path(
-        "kill-chain-phases/",
-        views.KillChainPhaseList.as_view(),
-        name="kill-chain-phase-list",
-    ),
-    path(
-        "mitre-tactics/",
-        views.MitreTacticList.as_view(),
-        name="mitre-tactic-list",
-    ),
-    path(
-        "mitre-techniques/",
-        views.MitreTechniqueList.as_view(),
-        name="mitre-technique-list",
-    ),
+    # 3. Custom Endpoints (Preserved & Updated)
+    
+    # Dashboard & Stats
+    path("dashboard/", views.DashboardStatsView.as_view(), name="dashboard-stats"),
+    path("frameworks/tactics/", views.FrameworkTacticsView.as_view(), name="framework-tactics"),
+    
+    # Specific Technique Lookup (Preserved for compatibility)
     path(
         "frameworks/tactics/<uuid:tactic_id>/techniques/",
         views.TechniquesByTacticList.as_view(),
         name="techniques-by-tactic",
     ),
 
-    # Mappings
-    path(
-        "lesson-techniques/",
-        views.LessonTechniqueMapListCreate.as_view(),
-        name="lesson-technique-map-list",
-    ),
-    path(
-        "tactic-phases/",
-        views.TacticPhaseMapListCreate.as_view(),
-        name="tactic-phase-map-list",
-    ),
-
-    # User progress & logs
-    path(
-        "user-progress/",
-        views.UserProgressListCreate.as_view(),
-        name="user-progress-list",
-    ),
-    path(
-        "nav-logs/",
-        views.NavBotLogListCreate.as_view(),
-        name="nav-bot-log-list",
-    ),
-    # Navigator command endpoint used by the frontend navigator component
+    # Navigator Bot
     path("navigator/command", views.NavigatorCommandView.as_view(), name="navigator-command"),
-    # path(
-    #     "tools/",
-    #     views.ToolList.as_view(),
-    #     name="tool-list",
-    # ),
-    path(
-        "dashboard/",
-        views.DashboardStatsView.as_view(),
-        name="dashboard-stats",
-    ),
-    path(
-        "frameworks/tactics/",
-        views.FrameworkTacticsView.as_view(),
-        name="framework-tactics",
-    ),
+
+    # Manual Lesson Completion (Alternative to ViewSet)
+    path("lessons/<uuid:pk>/complete/", views.LessonCompleteView.as_view(), name="lesson-complete"),
 ]
