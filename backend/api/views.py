@@ -8,7 +8,8 @@ from rest_framework.decorators import action
 from .models import (
     Path, Module, Lesson,
     MitreTactic, MitreTechnique,
-    UserProgress, NavBotLog
+    UserProgress, NavBotLog,
+    LessonTechniqueMap
 )
 from .serializers import (
     UserSerializer, PathSerializer, ModuleSerializer, LessonSerializer,
@@ -47,7 +48,7 @@ class PathViewSet(viewsets.ModelViewSet):
     queryset = Path.objects.all()
     serializer_class = PathSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
-    lookup_field = 'slug'
+    # lookup_field = 'slug' - Removed to allow lookup by ID (pk) which frontend uses
 
 class ModuleViewSet(viewsets.ModelViewSet):
     queryset = Module.objects.all()
@@ -146,45 +147,63 @@ class NavigatorCommandView(APIView):
     def post(self, request, *args, **kwargs):
         data = request.data or {}
         cmd_raw = data.get("input", "")
-        cmd = (cmd_raw or "").strip()
+        # For 'explain' calls, payload might be { "query": "..." }
+        query = data.get("query", cmd_raw).strip() 
         context = data.get("context", {})
 
-        if cmd.lower().startswith("navigate "):
-            url = cmd.split(" ", 1)[1]
-            return Response({"type": "action", "payload": {"action": "navigate", "url": url}})
+        # 1. Navigation Flow (Client often handles this, but backend can suggest)
+        # If the input is just "navigate", we return the root paths
+        if query.lower() == "navigate":
+            paths = Path.objects.all().values("id", "title")
+            options = [{"label": p["title"], "value": f"path_id:{p['id']}", "type": "path"} for p in paths]
+            return Response({
+                "type": "options", 
+                "message": "Select a learning path:", 
+                "options": options
+            })
 
-        if cmd.lower().startswith("technique ") or cmd.lower().startswith("show technique "):
-            term = cmd.split(" ", 1)[1]
-            try:
-                tech = MitreTechnique.objects.filter(mitre_id__iexact=term).first()
-                if not tech:
-                    tech = MitreTechnique.objects.filter(name__icontains=term).first()
-                if tech:
-                    payload = {
-                        "id": str(tech.id),
-                        "mitre_id": tech.mitre_id,
-                        "name": tech.name,
-                        "description": tech.description,
-                    }
-                    return Response({"type": "technique_detail", "payload": payload})
-            except Exception:
-                pass
-            return Response({"type": "options", "payload": {"message": "Technique not found", "options": []}})
+        # 2. Explanation Flow
+        # Checks if the user is asking about a technique (e.g., "Explain T1059")
+        # Or if the request explicitly asks for it via "query" param
+        if query:
+            # Try to match a MITRE technique by ID or Name
+            # Improve search: Case insensitive, partial match
+            tech = MitreTechnique.objects.filter(mitre_id__iexact=query).first()
+            if not tech:
+                tech = MitreTechnique.objects.filter(name__icontains=query).first()
+            
+            if tech:
+                # Found a technique! Resolve the linked Lesson UUID
+                # Look for a LessonTechniqueMap linking this technique
+                lesson_link = LessonTechniqueMap.objects.filter(technique=tech).first()
+                
+                # Default link fallback
+                link_url = f"/library" 
 
-        if cmd.lower() == "stats":
-            total = MitreTechnique.objects.count()
-            # Logic update: 'mastered' -> 'completed'
-            completed = request.user.progress.filter(status="completed").count()
-            pct = int((completed / total) * 100) if total else 0
-            payload = {
-                "percentage": pct,
-                "techniques_mastered": completed,
-                "techniques_total": total,
-                "current_path": context.get("current_page", ""),
-            }
-            return Response({"type": "stats", "payload": payload})
+                if lesson_link:
+                   link_url = f"/lessons/{lesson_link.lesson.id}"
+                
+                payload = {
+                    "id": str(tech.id),
+                    "mitre_id": tech.mitre_id,
+                    "name": tech.name,
+                    "description": tech.description[:500] + "..." if tech.description else "No description available.",
+                    "link": link_url
+                }
+                return Response({
+                    "type": "technique_detail", 
+                    "message": f"Here is what I found for {tech.mitre_id}:",
+                    "payload": payload
+                })
+            
+            # If no technique found, maybe it's a general question? 
+            # For now, we fallback to a generic message.
+            return Response({
+                "type": "message", 
+                "message": f"I couldn't find a technique matching '{query}'. Try searching by ID (e.g., T1059) or Name."
+            })
 
-        return Response({"type": "options", "payload": {"message": f"Unrecognized command: {cmd_raw}", "options": []}})
+        return Response({"type": "message", "message": "How can I help you? You can say 'Navigate' or ask about a technique."})
 
 # Preserved: Simple completion endpoint
 class LessonCompleteView(APIView):

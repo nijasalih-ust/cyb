@@ -1,10 +1,10 @@
 import React from "react";
 import Sidebar from "../Sidebar/Sidebar";
-import Navigator from "../Navigator/Navigator";
+import NavigatorBot from "../NavigatorBot/NavigatorBot";
 
 const Layout = ({ children }) => {
     return (
-        <div 
+        <div
             className="min-h-screen font-body transition-colors duration-300"
             style={{ backgroundColor: 'var(--bg-primary)' }}
         >
@@ -15,7 +15,7 @@ const Layout = ({ children }) => {
 
                 {children}
             </div>
-            <Navigator />
+            <NavigatorBot />
         </div>
     );
 };

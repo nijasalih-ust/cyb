@@ -59,7 +59,11 @@ def run():
             try:
                 path = Path.objects.get(slug=path_slug)
             except Path.DoesNotExist:
+                print(f"Path not found: {path_slug}")
                 continue
+            
+            existing = Module.objects.filter(path=path, order_index=order_index).exists()
+            print(f"Seeding Module: {path_slug} - {order_index}. Exists? {existing}")
 
             obj, _ = Module.objects.update_or_create(
                 path=path,
@@ -132,17 +136,29 @@ def run():
         ]
 
 
+        # Track lesson order per module
+        module_lesson_counts = {}
+
         for path_slug, order_index, title, router_link, description, key_indicators in lesson_data:
             try:
                 module = Module.objects.get(path__slug=path_slug, order_index=order_index)
             except Module.DoesNotExist:
                 continue
 
+            # Calculate next order index for this module
+            if module.id not in module_lesson_counts:
+                module_lesson_counts[module.id] = 1
+            else:
+                module_lesson_counts[module.id] += 1
+            
+            lesson_order = module_lesson_counts[module.id]
+
             obj, _ = Lesson.objects.update_or_create(
                 module=module,
                 title=title,
                 defaults={
                     "router_link": router_link,
+                    "order_index": lesson_order,
                     "description": description,
                     "key_indicators": key_indicators,
                 },

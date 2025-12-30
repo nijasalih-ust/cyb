@@ -63,23 +63,32 @@ const PathDetail = () => {
                 <div className="space-y-4">
                     {pathData.modules && pathData.modules.map((module, index) => (
                         <div key={module.id} className="bg-black/20 rounded-xl p-4 border border-white/5">
-                            <h3 className="text-xl font-bold text-cyber-text-primary mb-4">Module {index + 1}: {module.title || 'Untitled Module'}</h3>
+                            <h3 className="text-xl font-bold text-cyber-text-primary mb-4 flex items-center gap-3">
+                                <span className="text-cyber-blue opacity-50 font-mono text-sm">#{index + 1}</span>
+                                {module.title}
+                            </h3>
                             <div className="space-y-2">
-                                {module.lessons && module.lessons.map((lesson) => (
-                                    <div
-                                        key={lesson.id}
-                                        onClick={() => navigate(`/lessons/${lesson.id}`)}
-                                        className="flex items-center justify-between p-3 bg-black/40 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer"
-                                    >
-                                        <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-cyber-blue/10 flex items-center justify-center text-cyber-blue">
-                                                <Play size={14} />
+                                {module.lessons && module.lessons.length > 0 ? (
+                                    module.lessons.map((lesson) => (
+                                        <div
+                                            key={lesson.id}
+                                            onClick={() => navigate(`/lessons/${lesson.id}`)}
+                                            className="flex items-center justify-between p-3 bg-black/40 rounded-lg hover:bg-white/5 transition-colors group cursor-pointer border border-transparent hover:border-cyber-blue/30"
+                                        >
+                                            <div className="flex items-center gap-3">
+                                                <div className="w-8 h-8 rounded-full bg-cyber-blue/10 flex items-center justify-center text-cyber-blue group-hover:bg-cyber-blue group-hover:text-black transition-all">
+                                                    <Play size={14} fill="currentColor" />
+                                                </div>
+                                                <span className="text-gray-200 font-medium group-hover:text-cyber-text-primary transition-colors">{lesson.title}</span>
                                             </div>
-                                            <span className="text-gray-200 font-medium group-hover:text-cyber-text-primary transition-colors">{lesson.title}</span>
+                                            <span className="text-xs text-gray-500 font-mono border border-white/5 px-2 py-1 rounded">15 MIN</span>
                                         </div>
-                                        <span className="text-xs text-gray-500 font-mono">15 MIN</span>
+                                    ))
+                                ) : (
+                                    <div className="p-4 text-center text-gray-500 text-sm italic border border-dashed border-gray-800 rounded-lg">
+                                        No training modules available for this tactic yet.
                                     </div>
-                                ))}
+                                )}
                             </div>
                         </div>
                     ))}

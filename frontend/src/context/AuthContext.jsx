@@ -23,14 +23,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (username, password) => {
+  const login = async (email, password) => {
     try {
-      const response = await api.post("/token/", { username, password });
+      const response = await api.post("/token/", { email, password });
 
       const { access, refresh } = response.data;
 
       const userData = {
-        username,
+        email,
         access,
         refresh
       };

@@ -1,20 +1,30 @@
 # api/models.py
 import uuid
 from django.db import models
-from django.contrib.auth.models import AbstractUser
+from django.contrib.auth.models import AbstractBaseUser, PermissionsMixin
 from django.utils import timezone
+from .managers import CustomUserManager
 
 # ============================================================================
 # 1. Identity & Auth
 # ============================================================================
 
-class User(AbstractUser):
+class User(AbstractBaseUser, PermissionsMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     email = models.EmailField(unique=True)
+    first_name = models.CharField(max_length=50, blank=True)
+    last_name = models.CharField(max_length=50, blank=True)
     role = models.CharField(max_length=50, default="student")
     is_verified = models.BooleanField(default=False)
+    
+    is_active = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=False)
+    date_joined = models.DateTimeField(default=timezone.now)
 
-    # username, password, etc. come from AbstractUser
+    objects = CustomUserManager()
+
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = []
 
     class Meta:
         db_table = "users"
@@ -37,6 +47,20 @@ class RefreshToken(models.Model):
 # 2. Framework (MITRE ATT&CK)
 # ============================================================================
 
+class KillChainPhase(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    step_number = models.IntegerField()
+    name = models.CharField(max_length=255)
+    description = models.TextField(blank=True, null=True)
+
+    class Meta:
+        db_table = "kill_chain_phases"
+        ordering = ['step_number']
+
+    def __str__(self):
+        return f"{self.step_number}. {self.name}"
+
+
 class MitreTactic(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     mitre_id = models.CharField(max_length=100, unique=True)
@@ -47,6 +71,19 @@ class MitreTactic(models.Model):
 
     def __str__(self):
         return f"{self.mitre_id} - {self.name}"
+
+
+class TacticPhaseMap(models.Model):
+    tactic = models.ForeignKey(
+        MitreTactic, on_delete=models.CASCADE, related_name="phases"
+    )
+    phase = models.ForeignKey(
+        KillChainPhase, on_delete=models.CASCADE, related_name="tactics"
+    )
+
+    class Meta:
+        db_table = "tactic_phase_map"
+        unique_together = (("tactic", "phase"),)
 
 
 class MitreTechnique(models.Model):
@@ -73,6 +110,7 @@ class Path(models.Model):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
+    type = models.CharField(max_length=50)  # e.g., 'offensive', 'defensive'
     type = models.CharField(max_length=50)  # e.g., 'offensive', 'defensive'
 
     class Meta:
@@ -111,6 +149,7 @@ class Lesson(models.Model):
     
     # Optional content details
     description = models.TextField(blank=True, null=True)
+    content = models.TextField(blank=True, null=True)  # Markdown content
     key_indicators = models.TextField(blank=True, null=True)
 
     class Meta:
@@ -190,3 +229,37 @@ class NavBotLog(models.Model):
 
     class Meta:
         db_table = "nav_bot_logs"
+
+
+# ============================================================================
+# 5. Assessments (Quizzes)
+# ============================================================================
+
+class Quiz(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    module = models.ForeignKey(
+        Module, on_delete=models.CASCADE, related_name="quizzes"
+    )
+    title = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = "quizzes"
+
+    def __str__(self):
+        return self.title
+
+
+class QuizQuestion(models.Model):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    quiz = models.ForeignKey(
+        Quiz, on_delete=models.CASCADE, related_name="questions"
+    )
+    question_text = models.TextField()
+    options = models.JSONField()  # Store list of options
+    correct_answer = models.CharField(max_length=255)
+
+    class Meta:
+        db_table = "quiz_questions"
+
+    def __str__(self):
+        return self.question_text

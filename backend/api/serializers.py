@@ -14,7 +14,7 @@ User = get_user_model()
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
-        fields = ["id", "username", "password", "email", "role", "is_verified", "date_joined"]
+        fields = ["id", "password", "email", "role", "is_verified", "date_joined"]
         extra_kwargs = {
             "password": {"write_only": True},
             "email": {"required": True},
@@ -66,7 +66,7 @@ class LessonSerializer(serializers.ModelSerializer):
         fields = [
             "id", "module", "title", "content_type", 
             "router_link", "order_index", "description", 
-            "key_indicators", "techniques"
+            "content", "key_indicators", "techniques"
         ]
 
 class ModuleSerializer(serializers.ModelSerializer):
