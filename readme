@@ -15,11 +15,8 @@ DB_HOST=
 DB_PORT=
 "
 #seeding commands
-python manage.py seed_mitre_from_file --file ./enterprise-attack.json
-python manage.py shell 
->>> from api.seed import run
->>> run()
-
+python manage.py seed_mitre_from_file 
+python manage.py seed_curriculum
 
 ---------------------------
 Seeder_ai.py
