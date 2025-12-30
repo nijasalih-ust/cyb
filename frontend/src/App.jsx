@@ -13,6 +13,7 @@ import PathDetail from "./pages/PathDetail/PathDetail";
 import TacticDetail from "./pages/TacticDetail/TacticDetail";
 import LessonDetail from "./pages/LessonDetail/LessonDetail";
 import SIEMAssessment from "./pages/SiemAssessment/SiemAssessment";
+import { AuthProvider } from "./context/AuthContext";
 
 import SIEM from "./components/SIEM/SIEM";
 function App() {
