@@ -3,6 +3,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Terminal, X, MessageSquare, ChevronRight, Send, Search } from "lucide-react";
 import api from "../../services/api"; // Ensure this path is correct relative to your structure
 import { useNavigate } from "react-router-dom";
+import TechniqueViewer from '../../components/TechniqueViewer/TechniqueViewer';
 
 // Bubble Option Component
 const OptionBubble = ({ label, onClick, delay }) => (
@@ -126,8 +127,7 @@ const NavigatorBot = () => {
                     text: res.data.message,
                     richContent: (
                         <div className="bg-black/40 p-3 rounded-lg border border-cyber-purple/20 mt-2 text-sm">
-                            <strong className="text-cyber-purple block mb-1">{p.mitre_id} - {p.name}</strong>
-                            <p className="text-cyber-muted mb-2 text-xs">{p.description}</p>
+                            <TechniqueViewer name={p.name} mitre_id={p.mitre_id} description={p.description} />
                             <button
                                 onClick={() => { navigate(p.link); setIsOpen(false); }}
                                 className="text-xs bg-cyber-blue/10 text-cyber-blue px-2 py-1 rounded border border-cyber-blue/30 hover:bg-cyber-blue/20"

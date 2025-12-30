@@ -4,6 +4,7 @@ import learningService from '../../services/learningService';
 import { ChevronLeft, CheckCircle, Terminal, Cpu, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
 import ReactMarkdown from 'react-markdown';
+import TechniqueViewer from '../../components/TechniqueViewer/TechniqueViewer';
 
 const LessonDetail = () => {
     const { id } = useParams();
@@ -88,7 +89,7 @@ const LessonDetail = () => {
                         <ReactMarkdown>{lesson.content}</ReactMarkdown>
                     </div>
 
-                    {/* Techniques */}
+                    
                     {lesson.techniques && lesson.techniques.length > 0 && (
                         <div className="bg-red-500/5 border border-red-500/20 p-6 rounded-xl">
                             <h3 className="text-lg font-bold text-red-400 mb-2 flex items-center gap-2">
@@ -97,19 +98,7 @@ const LessonDetail = () => {
                             </h3>
                             <div className="space-y-2">
                                 {lesson.techniques.map((t, idx) => (
-                                    <div key={idx} className="flex flex-col border-b border-red-500/10 pb-2 last:border-0 last:pb-0">
-                                        <div className="flex justify-between items-start">
-                                            <span className="text-red-300 font-mono font-bold">
-                                                {t.technique.mitre_id}: {t.technique.name}
-                                            </span>
-                                            {t.technique.tactic && (
-                                                <span className="text-xs text-red-400/70 border border-red-500/20 px-2 py-0.5 rounded uppercase tracking-wider">
-                                                    {t.technique.tactic.name}
-                                                </span>
-                                            )}
-                                        </div>
-                                        <p className="text-gray-400 text-sm mt-1">{t.technique.description}</p>
-                                    </div>
+                                                        <TechniqueViewer name={t.technique.name} mitre_id={t.technique.mitre_id} description={t.technique.description} />
                                 ))}
                             </div>
                         </div>

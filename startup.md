@@ -7,7 +7,7 @@ Welcome to **cyb.lib**. Follow these instructions to set up the project on a new
 - **Node.js 16+** & **npm**
 - **PostgreSQL** (Ensure it is running and you have a DB created, e.g., `cyblib`)
 - **Ollama** (Optional, for generating new AI curriculum content)
-
+- version 9.8 of pgAdmin 4
 ---
 
 ## 1. Backend Setup
