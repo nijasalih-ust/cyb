@@ -65,7 +65,7 @@ const SIEM = () => {
     const handleEndInvestigation = () => {
         const confirmed = window.confirm('End this investigation without submitting? Your work will not be saved.');
         if (confirmed) {
-            navigate('/Siem_assessment');
+            navigate('/siem-practice');
         }
     };
 
@@ -88,7 +88,7 @@ const SIEM = () => {
     // Handle modal close and navigation
     const handleModalClose = () => {
         setShowResultModal(false);
-        navigate('/Siem_assessment');
+        navigate('/siem-practice');
     };
 
     // Format elapsed time as MM:SS

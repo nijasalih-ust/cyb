@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink, useLocation } from 'react-router-dom';
-import { Home, Shield, BookOpen, Database, LogOut, Terminal } from 'lucide-react';
+import { Home, Shield, BookOpen, Database, LogOut, Terminal, HelpCircle } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import ThemeToggle from '../ThemeToggle/ThemeToggle';
 
@@ -9,11 +9,10 @@ const Sidebar = () => {
     const location = useLocation();
 
     const navItems = [
-        { name: 'Dashboard', path: '/landing', icon: Home },
-        { name: 'Mission Library', path: '/library', icon: BookOpen },
-        { name: 'Threat Matrix', path: '/dictionary', icon: Database },
-        { name: 'Assessment', path: '/assessment', icon: Shield },
-        { name: 'SiemAssessment', path: '/Siem_assessment', icon: Shield }
+        { name: 'Dashboard', path: '/dashboard', icon: Home },
+        { name: 'Learning Paths', path: '/learning-paths', icon: BookOpen },
+        { name: 'Tactics Library', path: '/tactics-library', icon: Database },
+        { name: 'SIEM Practice', path: '/siem-practice', icon: Shield }
     ];
 
     return (
@@ -79,7 +78,16 @@ const Sidebar = () => {
                             </p>
                         </div>
                     </div>
-                    <ThemeToggle />
+                    <div className="flex items-center gap-2">
+                        <ThemeToggle />
+                        <NavLink
+                            to="/quiz-practice"
+                            className="relative p-2.5 rounded-lg border border-cyber-border bg-cyber-card text-cyber-text-secondary hover:text-cyber-purple hover:border-cyber-purple transition-all duration-300 group hover:scale-105 flex items-center justify-center shadow-md hover:shadow-[0_0_12px_rgba(168,85,247,0.3)]"
+                            title="Quiz Practice (Beta)"
+                        >
+                            <HelpCircle size={18} />
+                        </NavLink>
+                    </div>
                 </div>
 
                 <button

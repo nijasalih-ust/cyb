@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import learningService from '../../services/learningService';
-import { ChevronLeft, CheckCircle, Terminal, Cpu, ShieldCheck } from 'lucide-react';
+import { ChevronLeft, CheckCircle, ShieldCheck } from 'lucide-react';
 import { motion } from 'framer-motion';
-import ReactMarkdown from 'react-markdown';
 import TechniqueViewer from '../../components/TechniqueViewer/TechniqueViewer';
+import LessonViewer from '../../components/LessonViewer/LessonViewer';
 
 const LessonDetail = () => {
     const { id } = useParams();
@@ -19,10 +19,8 @@ const LessonDetail = () => {
             try {
                 const data = await learningService.getLesson(id);
                 setLesson(data);
-                // Check if already completed? Data might need to include this.
-                // For now, local state 'completed' is false unless user clicks complete.
             } catch (error) {
-                console.error("Failed to load lesson inintel.");
+                console.error("Failed to load lesson mission data.");
             } finally {
                 setLoading(false);
             }
@@ -36,7 +34,7 @@ const LessonDetail = () => {
             await learningService.completeLesson(id);
             setCompleted(true);
             setTimeout(() => {
-                // navigate(-1); // Go back to Path
+                // navigate(-1); // Optional: Auto Navigate back
             }, 1000);
         } catch (error) {
             console.error("Failed to complete mission.");
@@ -60,80 +58,53 @@ const LessonDetail = () => {
             <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                className="bg-cyber-card border border-cyber-border rounded-xl2 overflow-hidden"
+                className="bg-transparent"
             >
-                {/* Header */}
-                <div className="bg-black/40 p-8 border-b border-cyber-border/50">
-                    <div className="flex items-center gap-3 mb-4">
-                        <span className="px-3 py-1 bg-cyber-purple/20 text-cyber-purple text-xs font-mono font-bold rounded border border-cyber-purple/30">
-                            TRAINING MODULE
-                        </span>
-                        <span className="text-gray-500 font-mono text-xs">ID: {lesson.id.split('-')[0]}</span>
-                    </div>
-                    <h1 className="text-3xl font-display font-bold text-cyber-text-primary mb-4">{lesson.title}</h1>
-                    <div className="flex items-center gap-6 text-sm text-cyber-text-secondary">
-                        <div className="flex items-center gap-2">
-                            <Terminal size={16} className="text-cyber-blue" />
-                            <span>Interactive Lab</span>
-                        </div>
-                        <div className="flex items-center gap-2">
-                            <Cpu size={16} className="text-cyber-purple" />
-                            <span>15 Minutes</span>
-                        </div>
-                    </div>
-                </div>
+                {/* Lesson Viewer handles Title, Header, Content, and Key Indicators */}
+                <LessonViewer
+                    title={lesson.title}
+                    content={lesson.content}
+                    key_indicators={lesson.key_indicators}
+                    duration={lesson.duration || "15 Minutes"}
+                />
 
-                {/* Content */}
-                <div className="p-8 space-y-8">
-                    <div className="prose prose-invert max-w-none">
-                        <ReactMarkdown>{lesson.content}</ReactMarkdown>
-                    </div>
-
-                    
-                    {lesson.techniques && lesson.techniques.length > 0 && (
-                        <div className="bg-red-500/5 border border-red-500/20 p-6 rounded-xl">
-                            <h3 className="text-lg font-bold text-red-400 mb-2 flex items-center gap-2">
-                                <ShieldCheck size={20} />
-                                MITRE ATT&CK Techniques
-                            </h3>
-                            <div className="space-y-2">
-                                {lesson.techniques.map((t, idx) => (
-                                                        <TechniqueViewer name={t.technique.name} mitre_id={t.technique.mitre_id} description={t.technique.description} />
-                                ))}
-                            </div>
+                {/* Techniques List (Kept external to LessonViewer as per design) */}
+                {lesson.techniques && lesson.techniques.length > 0 && (
+                    <div className="mt-8 bg-red-500/5 border border-red-500/20 p-6 rounded-xl">
+                        <h3 className="text-lg font-bold text-red-400 mb-4 flex items-center gap-2">
+                            <ShieldCheck size={20} />
+                            Associated Techniques
+                        </h3>
+                        <div className="grid grid-cols-1 gap-4">
+                            {lesson.techniques.map((t, idx) => (
+                                <TechniqueViewer
+                                    key={idx}
+                                    name={t.technique.name}
+                                    mitre_id={t.technique.mitre_id}
+                                    description={t.technique.description}
+                                />
+                            ))}
                         </div>
+                    </div>
+                )}
+
+                {/* Action Area */}
+                <div className="mt-8 flex justify-end border-t border-white/5 pt-6">
+                    {completed ? (
+                        <div className="flex items-center gap-2 text-green-400 font-bold bg-green-500/10 px-6 py-3 rounded-lg border border-green-500/20">
+                            <CheckCircle size={20} />
+                            Mission Accomplished
+                        </div>
+                    ) : (
+                        <button
+                            onClick={handleComplete}
+                            disabled={completing}
+                            className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold text-black transition-all transform hover:scale-105
+                                ${completing ? 'bg-gray-500 cursor-not-allowed' : 'bg-cyber-blue hover:bg-white hover:shadow-glow-blue'}`}
+                        >
+                            {completing ? 'Uploading Report...' : 'Complete Mission'}
+                        </button>
                     )}
-
-                    {lesson.key_indicators && (
-                        <div className="bg-blue-500/5 border border-blue-500/20 p-6 rounded-xl">
-                            <h3 className="text-lg font-bold text-blue-400 mb-2 flex items-center gap-2">
-                                <ShieldCheck size={20} />
-                                Key Indicators
-                            </h3>
-                            <p className="text-gray-300 font-mono text-sm leading-relaxed whitespace-pre-line">
-                                {lesson.key_indicators}
-                            </p>
-                        </div>
-                    )}
-
-                    {/* Action Area */}
-                    <div className="pt-8 border-t border-white/5 flex justify-end">
-                        {completed ? (
-                            <div className="flex items-center gap-2 text-green-400 font-bold bg-green-500/10 px-6 py-3 rounded-lg border border-green-500/20">
-                                <CheckCircle size={20} />
-                                Mission Accomplished
-                            </div>
-                        ) : (
-                            <button
-                                onClick={handleComplete}
-                                disabled={completing}
-                                className={`flex items-center gap-2 px-8 py-3 rounded-lg font-bold text-black transition-all transform hover:scale-105
-                                    ${completing ? 'bg-gray-500 cursor-not-allowed' : 'bg-cyber-blue hover:bg-white hover:shadow-glow-blue'}`}
-                            >
-                                {completing ? 'Uploading Report...' : 'Complete Mission'}
-                            </button>
-                        )}
-                    </div>
                 </div>
             </motion.div>
         </div>

@@ -33,7 +33,7 @@ function Dictionary() {
   return (
     <div className="space-y-6">
       <div className="max-w-7xl mx-auto">
-        <h2 className="text-3xl font-display font-bold text-cyber-purple mb-2">Threat Matrix</h2>
+        <h2 className="text-3xl font-display font-bold text-cyber-purple mb-2">Tactics Library</h2>
         <p className="text-cyber-text-secondary font-body mb-8">Encyclopedia of adversary tactics and techniques based on MITRE ATT&CK®.</p>
 
         {/* Search Bar */}
@@ -57,7 +57,7 @@ function Dictionary() {
             filteredTactics.map((item) => (
               <div
                 key={item.mitre_id}
-                onClick={() => navigate(`/dictionary/${item.id}`)}
+                onClick={() => navigate(`/tactics-library/${item.id}`)}
                 className="bg-cyber-card border border-cyber-border/50 p-6 rounded-xl2 hover:border-cyber-purple/50 transition-all duration-300 hover:shadow-glow group cursor-pointer"
               >
                 <div className="flex justify-between items-start mb-2">

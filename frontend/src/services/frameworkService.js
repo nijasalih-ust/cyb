@@ -23,7 +23,7 @@ const frameworkService = {
 
     getTechnique: async (id) => {
         try {
-            const response = await api.get(`/mitre-techniques/${id}/`);
+            const response = await api.get(`/techniques/${id}/`);
             return response.data;
         } catch (error) {
             console.error(`Failed to fetch technique ${id}:`, error);

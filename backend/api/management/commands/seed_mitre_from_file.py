@@ -18,7 +18,7 @@ class Command(BaseCommand):
 
     def add_arguments(self, parser):
         # Default assumes file is one level up from backend/
-        parser.add_argument('--file', dest='file', default='../enterprise-attack.json', help='Path to enterprise-attack.json')
+        parser.add_argument('--file', dest='file', default='data/enterprise-attack.json', help='Path to enterprise-attack.json')
 
     def handle(self, *args, **options):
         file_path = options['file']

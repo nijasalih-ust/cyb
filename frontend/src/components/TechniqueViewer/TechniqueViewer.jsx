@@ -1,9 +1,14 @@
 import React, { useState } from 'react';
 import { ChevronDown } from 'lucide-react';
 
-const TechniqueViewer = ({ name, mitre_id, description }) => {
-  const [isExpanded, setIsExpanded] = useState(false);
+const TechniqueViewer = ({ name, mitre_id, description, forceExpanded = false }) => {
+  const [isExpanded, setIsExpanded] = useState(forceExpanded);
   const [hoveredRef, setHoveredRef] = useState(null);
+
+  // Effect to ensure forceExpanded is respected if it changes or on mount
+  React.useEffect(() => {
+    if (forceExpanded) setIsExpanded(true);
+  }, [forceExpanded]);
 
   if (!description) {
     return (
@@ -38,7 +43,7 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
     paragraphs.forEach((para, paraIdx) => {
       const parts = [];
       let lastIndex = 0;
-      
+
       // Find all code blocks
       const codeRegex = /<code>([^<]+)<\/code>/g;
       let match;
@@ -95,15 +100,15 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
       // Parse both links and citations from text
       const linkRegex = /\[([^\]]+)\]\(([^)]+)\)/g;
       const citationRegex = /(__CITATION_\d+__)/g;
-      
+
       const textSegments = [];
       let lastIndex = 0;
-      
+
       // Find all links and citations, maintaining order
       const matches = [];
       let linkMatch;
       let citMatch;
-      
+
       while ((linkMatch = linkRegex.exec(part.content)) !== null) {
         matches.push({
           type: 'link',
@@ -113,10 +118,10 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
           url: linkMatch[2]
         });
       }
-      
+
       linkRegex.lastIndex = 0; // Reset regex
       citationRegex.lastIndex = 0;
-      
+
       while ((citMatch = citationRegex.exec(part.content)) !== null) {
         matches.push({
           type: 'citation',
@@ -125,14 +130,14 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
           text: citMatch[0]
         });
       }
-      
+
       // Sort matches by start position
       matches.sort((a, b) => a.start - b.start);
-      
+
       // Build the rendered output
       lastIndex = 0;
       const rendered = [];
-      
+
       matches.forEach((match, matchIdx) => {
         // Add text before match
         if (match.start > lastIndex) {
@@ -142,7 +147,7 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
             </span>
           );
         }
-        
+
         // Add the match (link or citation)
         if (match.type === 'link') {
           const isValidUrl = match.url.startsWith('http://') || match.url.startsWith('https://');
@@ -177,10 +182,10 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
             </span>
           );
         }
-        
+
         lastIndex = match.end;
       });
-      
+
       // Add remaining text
       if (lastIndex < part.content.length) {
         rendered.push(
@@ -189,7 +194,7 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
           </span>
         );
       }
-      
+
       return rendered.length > 0 ? rendered : part.content;
     }
   };
@@ -208,7 +213,7 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
       </h3>
 
       <div className="space-y-3">
-        {!isExpanded ? (
+        {!isExpanded && !forceExpanded ? (
           <div>
             {/* CHANGED: text-gray-300 -> text-cyber-text-secondary */}
             <p className="text-cyber-text-secondary text-sm leading-relaxed">{preview}</p>
@@ -247,13 +252,15 @@ const TechniqueViewer = ({ name, mitre_id, description }) => {
               </div>
             )}
 
-            <button
-              onClick={() => setIsExpanded(false)}
-              className="mt-3 inline-flex items-center gap-1 text-cyber-purple hover:text-cyber-purple/80 text-xs font-semibold transition-colors"
-            >
-              <ChevronDown size={14} className="rotate-180" />
-              Collapse
-            </button>
+            {!forceExpanded && (
+              <button
+                onClick={() => setIsExpanded(false)}
+                className="mt-3 inline-flex items-center gap-1 text-cyber-purple hover:text-cyber-purple/80 text-xs font-semibold transition-colors"
+              >
+                <ChevronDown size={14} className="rotate-180" />
+                Collapse
+              </button>
+            )}
           </div>
         )}
       </div>

@@ -10,7 +10,7 @@ class Command(BaseCommand):
     help = 'Seeds the curriculum from scripts/curriculum_data.json'
 
     def handle(self, *args, **options):
-        file_path = os.path.join(settings.BASE_DIR, 'scripts', 'curriculum_data.json')
+        file_path = os.path.join(settings.BASE_DIR, 'data', 'curriculum_data.json')
 
         self.stdout.write(f"📂 Reading {file_path}...")
 

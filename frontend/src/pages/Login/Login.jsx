@@ -21,7 +21,7 @@ function Login() {
       // LOGIN LOGIC
       const result = await login(email, password);
       if (result.success) {
-        navigate("/landing");
+        navigate("/dashboard");
       } else {
         alert(result.message || "Invalid credentials");
       }

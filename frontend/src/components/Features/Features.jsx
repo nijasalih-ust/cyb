@@ -14,13 +14,13 @@ const FEATURES = [
     title: "MITRE ATT&CK",
     desc: "Map attacker behavior to industry frameworks.",
     icon: <FaBook />,
-    path: "/library",
+    path: "/learning-paths",
   },
   {
-    title: "Dictionary",
+    title: "Tactics Library",
     desc: "Look up cyber security terms and definitions.",
     icon: <FaBookOpen />,
-    path: "/dictionary",
+    path: "/tactics-library",
   },
   {
     title: "AI SOC Analyst",
@@ -60,7 +60,7 @@ function Features() {
             whileHover={{ scale: 1.02 }}
           >
             <div className="text-cyber-purple mb-3 text-2xl group-hover:scale-110 transition-transform duration-300">
-                {f.icon}
+              {f.icon}
             </div>
             {/* FIXED: text-cyber-text-primary */}
             <h3 className="text-lg font-semibold text-cyber-text-primary">
@@ -68,7 +68,7 @@ function Features() {
             </h3>
             {/* FIXED: text-cyber-text-secondary */}
             <p className="mt-2 text-sm text-cyber-text-secondary">
-                {f.desc}
+              {f.desc}
             </p>
           </motion.div>
         ))}

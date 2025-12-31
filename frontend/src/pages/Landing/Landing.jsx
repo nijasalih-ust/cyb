@@ -7,9 +7,9 @@ function Landing() {
   const navigate = useNavigate();
 
   const quickActions = [
-    { title: "Continue Operation", desc: "Resume your last active lab session.", icon: Zap, path: "/library", color: "text-yellow-400" },
-    { title: "Browse Missions", desc: "Explore new learning paths and modules.", icon: BookOpen, path: "/library", color: "text-blue-400" },
-    { title: "Research Tactics", desc: "Consult the Threat Matrix dictionary.", icon: Target, path: "/dictionary", color: "text-red-400" },
+    { title: "Continue Operation", desc: "Resume your last active lab session.", icon: Zap, path: "/learning-paths", color: "text-yellow-400" },
+    { title: "Learning Paths", desc: "Explore new learning paths and modules.", icon: BookOpen, path: "/learning-paths", color: "text-blue-400" },
+    { title: "Tactics Library", desc: "Consult the Tactics Library.", icon: Target, path: "/tactics-library", color: "text-red-400" },
     { title: "Incident Analysis", desc: "Start a new investigation assessment.", icon: ShieldAlert, path: "/assessment", color: "text-purple-400" },
   ];
 

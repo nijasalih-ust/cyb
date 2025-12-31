@@ -69,6 +69,7 @@ class MitreTechniqueViewSet(viewsets.ModelViewSet):
     queryset = MitreTechnique.objects.all()
     serializer_class = MitreTechniqueSerializer
     permission_classes = [permissions.IsAuthenticatedOrReadOnly]
+    lookup_field = 'mitre_id'
 
 class UserProgressViewSet(viewsets.ModelViewSet):
     serializer_class = UserProgressSerializer

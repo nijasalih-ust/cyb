@@ -31,12 +31,12 @@ function Library() {
           transition={{ duration: 0.5 }}
           className="text-3xl font-display font-bold text-cyber-text-primary mb-2"
         >
-          Mission Library
+          Learning Paths
         </motion.h2>
         <p className="text-cyber-text-secondary font-body mb-8">Select a specialized learning path to begin your training operations.</p>
 
         {loading ? (
-          <p className="text-cyber-blue animate-pulse font-mono">Loading mission parameters...</p>
+          <p className="text-cyber-blue animate-pulse font-mono">Loading learning paths...</p>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {paths.map((path, i) => (

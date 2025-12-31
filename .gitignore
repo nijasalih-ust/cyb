@@ -92,7 +92,7 @@ htmlcov/
 # Database backups
 *.sql
 *.sql.gz
-
+*.dump
 
 # Poetry / Pipenv
 poetry.lock

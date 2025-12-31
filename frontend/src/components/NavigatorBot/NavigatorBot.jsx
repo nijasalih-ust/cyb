@@ -129,10 +129,10 @@ const NavigatorBot = () => {
                         <div className="bg-black/40 p-3 rounded-lg border border-cyber-purple/20 mt-2 text-sm">
                             <TechniqueViewer name={p.name} mitre_id={p.mitre_id} description={p.description} />
                             <button
-                                onClick={() => { navigate(p.link); setIsOpen(false); }}
+                                onClick={() => { navigate(`/techniques/${p.mitre_id}`); setIsOpen(false); }}
                                 className="text-xs bg-cyber-blue/10 text-cyber-blue px-2 py-1 rounded border border-cyber-blue/30 hover:bg-cyber-blue/20"
                             >
-                                View Full Lesson
+                                View Full Technique
                             </button>
                         </div>
                     )

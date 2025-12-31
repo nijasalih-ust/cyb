@@ -37,10 +37,10 @@ const PathDetail = () => {
     return (
         <div className="max-w-5xl mx-auto space-y-8">
             <button
-                onClick={() => navigate('/library')}
-                className="flex items-center text-cyber-text-secondary hover:text-cyber-blue transition-colors gap-2"
+                onClick={() => navigate('/learning-paths')}
+                className="flex items-center text-cyber-purple hover:text-cyber-purple/80 transition-colors gap-2 font-medium font-body"
             >
-                <ChevronLeft size={20} /> Back to Library
+                <ChevronLeft size={20} /> Back to Learning Paths
             </button>
 
             <motion.div

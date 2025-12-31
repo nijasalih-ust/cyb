@@ -1,6 +1,7 @@
 import React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { mitreData } from "../../data/mitreData";
+import { ChevronLeft } from 'lucide-react';
 import "./ArticleDetail.css";
 
 function ArticleDetail() {
@@ -22,7 +23,12 @@ function ArticleDetail() {
     <div className="article-detail">
       <h2>{article.title}</h2>
       <p>{article.details}</p>
-      <button onClick={() => navigate("/library")}>Back to Library</button>
+      <button
+        onClick={() => navigate("/learning-paths")}
+        className="flex items-center text-cyber-purple hover:text-cyber-purple/80 transition-colors gap-2 font-medium font-body"
+      >
+        <ChevronLeft size={20} /> Back to Learning Paths
+      </button>
     </div>
   );
 }
