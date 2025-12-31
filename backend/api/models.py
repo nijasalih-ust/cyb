@@ -128,6 +128,7 @@ class Path(models.Model):
     title = models.CharField(max_length=255)
     slug = models.SlugField(max_length=255, unique=True)
     type = models.CharField(max_length=50, choices=PATH_TYPES, default='standard')
+    order_index = models.PositiveIntegerField(default=0)
     description = models.TextField(blank=True, default="")
     is_active = models.BooleanField(default=True)
     created_at = models.DateTimeField(auto_now_add=True)
@@ -135,7 +136,7 @@ class Path(models.Model):
     
     class Meta:
         db_table = "paths"
-        ordering = ['title']
+        ordering = ['order_index', 'title']
     
     def __str__(self):
         return self.title

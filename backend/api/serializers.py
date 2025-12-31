@@ -12,6 +12,8 @@ User = get_user_model()
 # 1. User & Auth (Preserved Custom Logic)
 # ==========================================
 class UserSerializer(serializers.ModelSerializer):
+    username = serializers.CharField(source='first_name', required=False)
+
     class Meta:
         model = User
         fields = ["id", "username", "password", "email", "role", "is_verified", "date_joined"]
@@ -27,6 +29,13 @@ class UserSerializer(serializers.ModelSerializer):
         user.set_password(password)
         user.save()
         return user
+
+    def to_representation(self, instance):
+        ret = super().to_representation(instance)
+        # Fallback if first_name (mapped to username) is empty
+        if not ret.get('username'):
+            ret['username'] = instance.email.split('@')[0]
+        return ret
 
 
 # ==========================================

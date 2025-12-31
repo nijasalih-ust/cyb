@@ -1,6 +1,7 @@
 [
     {
         "title": "SOC Fundamentals",
+        "order": 1,
         "slug": "soc-fundamentals",
         "type": "standard",
         "tier": "street",
@@ -58,6 +59,7 @@
     },
     {
         "title": "Network Defense Essentials",
+        "order": 2,
         "slug": "network-defense-essentials",
         "type": "standard",
         "tier": "corp",
@@ -115,6 +117,7 @@
     },
     {
         "title": "MITRE ATT&CK Enterprise Mastery",
+        "order": 3,
         "slug": "mitre-enterprise-mastery",
         "type": "standard",
         "tier": "legend",

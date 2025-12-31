@@ -7,7 +7,7 @@ from api.models import Path, Module, Lesson, MitreTechnique, LessonTechniqueMap
 from django.utils.text import slugify
 
 class Command(BaseCommand):
-    help = 'Seeds the curriculum from scripts/curriculum_data.json'
+    help = 'Seeds the curriculum from data/curriculum_data.json'
 
     def handle(self, *args, **options):
         file_path = os.path.join(settings.BASE_DIR, 'data', 'curriculum_data.json')
@@ -40,7 +40,8 @@ class Command(BaseCommand):
                         slug=path_item['slug'],
                         defaults={
                             'title': path_item['title'],
-                            'type': path_item.get('type', 'standard')
+                            'type': path_item.get('type', 'standard'),
+                            'order_index': path_item.get('order', 0)
                         }
                     )
                     status = "Created" if created else "Updated"
