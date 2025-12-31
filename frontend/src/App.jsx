@@ -13,37 +13,43 @@ import PathDetail from "./pages/PathDetail/PathDetail";
 import TacticDetail from "./pages/TacticDetail/TacticDetail";
 import LessonDetail from "./pages/LessonDetail/LessonDetail";
 import SIEMAssessment from "./pages/SiemAssessment/SiemAssessment";
+import { AuthProvider } from "./context/AuthContext";
 
-import Layout from "./components/Layout/Layout";
 import SIEM from "./components/SIEM/SIEM";
-
 function App() {
   return (
-    <Routes>
-      {/* Optional login page */}
-      <Route path="/login" element={<Login />} />
+    <AuthProvider>
+      <Routes>
+        {/* Public */}
+        <Route path="/login" element={<Login />} />
 
-      {/* Layout routes */}
-      <Route element={<Layout />}>
-        <Route path="/landing" element={<Landing />} />
-        <Route path="/library" element={<Library />} />
-        <Route path="/assessment" element={<Assessment />} />
-        <Route path="/dictionary" element={<Dictionary />} />
-        <Route path="/Siem_assessment" element={<SIEMAssessment />} />
-        <Route path="/article/:id" element={<ArticleDetail />} />
-        <Route path="/paths/:id" element={<PathDetail />} />
-        <Route path="/lessons/:id" element={<LessonDetail />} />
-        <Route path="/dictionary/:id" element={<TacticDetail />} />
-      </Route>
+        {/* Protected */}
+        <Route element={<ProtectedRoute />}>
+          
+          {/* With Layout */}
+          <Route element={<Layout />}>
+            <Route path="/landing" element={<Landing />} />
+            <Route path="/library" element={<Library />} />
+            <Route path="/assessment" element={<Assessment />} />
+            <Route path="/dictionary" element={<Dictionary />} />
+            <Route path="/Siem_assessment" element={<SIEMAssessment />} />
+            <Route path="/article/:id" element={<ArticleDetail />} />
+            <Route path="/paths/:id" element={<PathDetail />} />
+            <Route path="/lessons/:id" element={<LessonDetail />} />
+            <Route path="/dictionary/:id" element={<TacticDetail />} />
+          </Route>
 
-      {/* Fullscreen – no layout */}
-      <Route path="/siem/:id" element={<SIEM />} />
+          {/* Fullscreen */}
+          <Route path="/siem/:id" element={<SIEM />} />
+        </Route>
 
-      {/* Defaults */}
-      <Route path="/" element={<Navigate to="/landing" replace />} />
-      <Route path="*" element={<Navigate to="/landing" replace />} />
-    </Routes>
+        {/* Defaults */}
+        <Route path="/" element={<Navigate to="/login" replace />} />
+        <Route path="*" element={<Navigate to="/login" replace />} />
+      </Routes>
+    </AuthProvider>
   );
 }
+
 
 export default App;
