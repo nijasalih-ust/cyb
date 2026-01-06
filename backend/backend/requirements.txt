@@ -13,3 +13,4 @@ taxii2-client==2.3.0
 stix2==3.0.1
 pytest==9.0.2
 pytest-django==4.11.1
+pytest-cov
