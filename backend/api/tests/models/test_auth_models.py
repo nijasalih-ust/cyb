@@ -56,7 +56,7 @@ class TestRefreshTokenModel:
         )
         user.delete()
         assert not RefreshToken.objects.filter(id=token.id).exists()
-
+# checks that the db contains only 1 active token
     def test_token_indexes_query(self):
         user = User.objects.create_user(email="idx@example.com", password="pass")
         RefreshToken.objects.create(user=user, token_hash="hash1", expires_at=timezone.now())
